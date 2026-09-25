@@ -10,14 +10,19 @@
 .section-tag {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding-right: 55px;
   color: var(--muted);
   font-size: 9px;
 }
 
-.section-tag > span:last-child {
-  font-size: 20px;
+.section-tag > span:last-child,
+.section-tag .tag-icon {
+  font-size: 15px;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 h2 {

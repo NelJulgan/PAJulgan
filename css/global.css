@@ -38,3 +38,33 @@
   transform: scaleX(0);
 }
 
+/* STEP 1: Global Lucide SVG Icon System & Scalable Stroke Geometry */
+/* Why this code exists:
+   Establishes scalable vector geometry for inline Lucide SVG icons across the site.
+   By binding width and height to '1em' with 'currentColor' stroke, each icon
+   inherits exact typographic sizing and color from its surrounding element.
+   Tricky logic:
+   1. 'stroke: currentColor' and 'fill: none' guarantee SVG strokes adapt dynamically to hover states.
+   2. 'vertical-align: -0.15em' aligns vector glyphs with the typographic baseline/x-height.
+   3. 'flex-shrink: 0' prevents SVGs from distorting inside flex/grid containers.
+   TODO: Verify icon rendering in high-contrast accessibility mode. */
+.lucide {
+  width: 1em;
+  height: 1em;
+  stroke: currentColor;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  display: inline-block;
+  vertical-align: -0.15em;
+  flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), stroke 0.25s ease;
+}
+
+.icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}

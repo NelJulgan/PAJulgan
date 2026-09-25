@@ -97,11 +97,19 @@ nav .nav-contact {
   color: var(--red);
   border-left: 1px solid var(--line);
   padding-left: 30px;
+  display: inline-flex;
+  align-items: center;
 }
 
 nav .nav-contact span {
-  font-size: 23px;
+  font-size: 21px;
   margin-left: 35px;
+  display: inline-flex;
+  align-items: center;
+}
+
+nav .nav-contact:hover .lucide {
+  transform: translate(3px, -3px);
 }
 
 .menu-button {

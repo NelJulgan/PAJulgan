@@ -14,6 +14,22 @@ footer {
   color: var(--muted);
 }
 
+.footer-top a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+.footer-top a .lucide {
+  font-size: 11px;
+  transition: transform 0.25s ease;
+}
+
+.footer-top a:hover .lucide {
+  transform: translateY(-2px);
+}
+
 .footer-word {
   font-family: var(--codec);
   font-weight: 800;

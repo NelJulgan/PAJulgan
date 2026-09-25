@@ -155,7 +155,7 @@ Defines font-face declarations and root design tokens:
 Box-sizing normalization, tap highlight elimination, custom focus outlines, selection highlight colors, and subtle procedural fractal noise overlay on `body::after`.
 
 ### 3. `css/global.css`
-Shared typography classes (`.mono`, `.eyebrow`), skip link accessibility, and top scroll progress line.
+Shared typography classes (`.mono`, `.eyebrow`), skip link accessibility, top scroll progress line, and the **Global Lucide SVG Icon System** (`.lucide`, `.icon-wrap`) standardizing 1em typographic scaling, `currentColor` reactive stroke rendering, and baseline alignment.
 
 ### 4. Component Stylesheets (`css/components/`)
 - `intro.css`: Preloader curtain sizing, z-index layering (100), and column distribution.

@@ -54,10 +54,12 @@ summary:hover > .mono {
 
 .plus {
   margin-left: auto;
-  font-size: 23px;
+  font-size: 20px;
   font-weight: 400;
   transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s ease;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
 }
 

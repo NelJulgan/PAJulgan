@@ -174,6 +174,37 @@ img {
   transform: scaleX(0);
 }
 
+/* STEP 1: Global Lucide SVG Icon System & Scalable Stroke Geometry */
+/* Why this code exists:
+   Establishes scalable vector geometry for inline Lucide SVG icons across the site.
+   By binding width and height to '1em' with 'currentColor' stroke, each icon
+   inherits exact typographic sizing and color from its surrounding element.
+   Tricky logic:
+   1. 'stroke: currentColor' and 'fill: none' guarantee SVG strokes adapt dynamically to hover states.
+   2. 'vertical-align: -0.15em' aligns vector glyphs with the typographic baseline/x-height.
+   3. 'flex-shrink: 0' prevents SVGs from distorting inside flex/grid containers.
+   TODO: Verify icon rendering in high-contrast accessibility mode. */
+.lucide {
+  width: 1em;
+  height: 1em;
+  stroke: currentColor;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  display: inline-block;
+  vertical-align: -0.15em;
+  flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), stroke 0.25s ease;
+}
+
+.icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 /* ==========================================================================
    2nd — Core Functionality: Layout Components & UI Sections
    ========================================================================== */
@@ -315,11 +346,19 @@ nav .nav-contact {
   color: var(--red);
   border-left: 1px solid var(--line);
   padding-left: 30px;
+  display: inline-flex;
+  align-items: center;
 }
 
 nav .nav-contact span {
-  font-size: 23px;
+  font-size: 21px;
   margin-left: 35px;
+  display: inline-flex;
+  align-items: center;
+}
+
+nav .nav-contact:hover .lucide {
+  transform: translate(3px, -3px);
 }
 
 .menu-button {
@@ -417,6 +456,15 @@ h1 em {
 .cross {
   font: 27px var(--mono);
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cross .lucide {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.75px;
 }
 
 .hero-description p {
@@ -436,12 +484,18 @@ h1 em {
 }
 
 .text-link span {
-  font-size: 22px;
-  transition: transform 0.3s ease;
+  font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.text-link:hover span {
-  transform: translate(4px, -4px);
+.text-link:hover .lucide-arrow-down-right {
+  transform: translate(3px, 3px);
+}
+
+.text-link:hover .lucide-arrow-up-right {
+  transform: translate(3px, -3px);
 }
 
 /* CAD Crosshair grid canvas wrapper */
@@ -577,9 +631,22 @@ h1 em {
   font-size: 8px;
 }
 
+.hero-footer a {
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
 .hero-footer a span {
-  padding-left: 30px;
-  font-size: 15px;
+  padding-left: 18px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.25s ease;
+}
+
+.hero-footer a:hover span .lucide {
+  transform: translateY(2px);
 }
 
 .hero-footer > span:nth-child(2) {
@@ -598,14 +665,19 @@ h1 em {
 .section-tag {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding-right: 55px;
   color: var(--muted);
   font-size: 9px;
 }
 
-.section-tag > span:last-child {
-  font-size: 20px;
+.section-tag > span:last-child,
+.section-tag .tag-icon {
+  font-size: 15px;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 h2 {
@@ -749,16 +821,28 @@ body:not(.motion-ready) .project-track {
   border: 1px solid #ffffff80;
   width: 44px;
   height: 44px;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: white;
-  font-size: 22px;
-  transition: background 0.3s ease;
+  font-size: 20px;
+  transition: background 0.3s ease, border-color 0.3s ease;
   z-index: 2;
+}
+
+.project-open .lucide {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .project:hover .project-open {
   background: var(--red);
+  border-color: var(--red);
+}
+
+.project:hover .project-open .lucide {
+  transform: translate(2px, -2px);
 }
 
 .project-info {
@@ -785,6 +869,16 @@ body:not(.motion-ready) .project-track {
   align-items: center;
   margin: 30px 38px 0;
   font-size: 8px;
+}
+
+.work-footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.work-footer .lucide-move-horizontal {
+  font-size: 11px;
 }
 
 .work-progress {
@@ -854,10 +948,12 @@ summary:hover > .mono {
 
 .plus {
   margin-left: auto;
-  font-size: 23px;
+  font-size: 20px;
   font-weight: 400;
   transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s ease;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
 }
 
@@ -1055,7 +1151,19 @@ details[open] .plus {
 }
 
 .contact-button span {
-  font-size: 23px;
+  font-size: 21px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.contact-button:hover .lucide-arrow-up-right {
+  transform: translate(3px, -3px);
+}
+
+.contact-button:hover .lucide-download {
+  transform: translateY(2px);
 }
 
 /* STEP 2: Footer & Centered Liquid Ink Displacement Mask */
@@ -1072,6 +1180,22 @@ footer {
 
 .footer-top {
   color: var(--muted);
+}
+
+.footer-top a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+.footer-top a .lucide {
+  font-size: 11px;
+  transition: transform 0.25s ease;
+}
+
+.footer-top a:hover .lucide {
+  transform: translateY(-2px);
 }
 
 .footer-word {
@@ -1206,9 +1330,24 @@ dialog::backdrop {
   float: right;
   margin: 15px 15px -55px 0;
   z-index: 2;
-  padding: 12px 20px;
+  padding: 12px 18px;
   background: var(--paper);
   font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.dialog-close .lucide {
+  font-size: 14px;
+  transition: transform 0.25s ease;
+}
+
+.dialog-close:hover .lucide {
+  transform: rotate(90deg);
 }
 
 #project-detail-image {
@@ -1495,9 +1634,11 @@ html.lenis body {
     cursor: pointer;
   }
   .menu-button span {
-    font-size: 24px;
+    font-size: 20px;
     line-height: 1;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   }
   .menu-button[aria-expanded="true"] span {
@@ -1741,6 +1882,9 @@ html.lenis body {
   }
   .work-footer > span:first-child {
     font-size: 0;
+  }
+  .work-footer > span:first-child .lucide {
+    display: none;
   }
   .work-footer > span:first-child::after {
     content: 'SELECTED STUDIES';

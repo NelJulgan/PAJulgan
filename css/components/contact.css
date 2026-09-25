@@ -38,6 +38,18 @@
 }
 
 .contact-button span {
-  font-size: 23px;
+  font-size: 21px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.contact-button:hover .lucide-arrow-up-right {
+  transform: translate(3px, -3px);
+}
+
+.contact-button:hover .lucide-download {
+  transform: translateY(2px);
 }
 

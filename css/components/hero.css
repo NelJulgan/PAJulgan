@@ -89,6 +89,15 @@ h1 em {
 .cross {
   font: 27px var(--mono);
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cross .lucide {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.75px;
 }
 
 .hero-description p {
@@ -108,12 +117,18 @@ h1 em {
 }
 
 .text-link span {
-  font-size: 22px;
-  transition: transform 0.3s ease;
+  font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.text-link:hover span {
-  transform: translate(4px, -4px);
+.text-link:hover .lucide-arrow-down-right {
+  transform: translate(3px, 3px);
+}
+
+.text-link:hover .lucide-arrow-up-right {
+  transform: translate(3px, -3px);
 }
 
 /* CAD Crosshair grid canvas wrapper */
@@ -249,9 +264,22 @@ h1 em {
   font-size: 8px;
 }
 
+.hero-footer a {
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
 .hero-footer a span {
-  padding-left: 30px;
-  font-size: 15px;
+  padding-left: 18px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.25s ease;
+}
+
+.hero-footer a:hover span .lucide {
+  transform: translateY(2px);
 }
 
 .hero-footer > span:nth-child(2) {

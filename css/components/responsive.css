@@ -204,9 +204,11 @@ html.lenis body {
     cursor: pointer;
   }
   .menu-button span {
-    font-size: 24px;
+    font-size: 20px;
     line-height: 1;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   }
   .menu-button[aria-expanded="true"] span {
@@ -450,6 +452,9 @@ html.lenis body {
   }
   .work-footer > span:first-child {
     font-size: 0;
+  }
+  .work-footer > span:first-child .lucide {
+    display: none;
   }
   .work-footer > span:first-child::after {
     content: 'SELECTED STUDIES';
