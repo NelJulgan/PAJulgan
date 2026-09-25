@@ -153,6 +153,15 @@ html.lenis body {
     display: none;
   }
 
+  /* Mobile Smooth Momentum Normalization:
+   * Enables native touch momentum and prevents rubber-band lockup */
+  html,
+  body {
+    overscroll-behavior-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
   ::-webkit-scrollbar {
     display: none;
     width: 0;

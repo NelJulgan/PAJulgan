@@ -138,8 +138,7 @@ if (DOM.menuButton && DOM.nav) {
   });
 }
 
-// STEP 3: Mathematical Cubic-Bezier Easing Solver (cubic-bezier(0.16, 1, 0.3, 1))
-// Why: Provides exact physics-based acceleration and deceleration curves to JS loops.
+// STEP 3: High-Precision Mathematical Solvers & Spring Physics
 function solveCubicBezier(x1, y1, x2, y2) {
   const ax = 1 - 3 * x2 + 3 * x1;
   const bx = 3 * x2 - 6 * x1;
@@ -149,15 +148,9 @@ function solveCubicBezier(x1, y1, x2, y2) {
   const by = 3 * y2 - 6 * y1;
   const cy = 3 * y1;
 
-  function sampleCurveX(t) {
-    return ((ax * t + bx) * t + cx) * t;
-  }
-  function sampleCurveY(t) {
-    return ((ay * t + by) * t + cy) * t;
-  }
-  function sampleCurveDerivativeX(t) {
-    return (3 * ax * t + 2 * bx) * t + cx;
-  }
+  function sampleCurveX(t) { return ((ax * t + bx) * t + cx) * t; }
+  function sampleCurveY(t) { return ((ay * t + by) * t + cy) * t; }
+  function sampleCurveDerivativeX(t) { return (3 * ax * t + 2 * bx) * t + cx; }
 
   function solveCurveX(x) {
     if (x <= 0) return 0;
@@ -170,75 +163,167 @@ function solveCubicBezier(x1, y1, x2, y2) {
       if (Math.abs(dX) < 1e-6) break;
       t -= xSample / dX;
     }
-    let t0 = 0;
-    let t1 = 1;
+    let t0 = 0, t1 = 1;
     t = x;
     while (t0 < t1) {
       const xSample = sampleCurveX(t);
       if (Math.abs(xSample - x) < 1e-6) return t;
-      if (x > xSample) t0 = t;
-      else t1 = t;
+      if (x > xSample) t0 = t; else t1 = t;
       t = (t1 + t0) * 0.5;
       if (t1 - t0 < 1e-6) break;
     }
     return t;
   }
 
-  return function (x) {
-    return sampleCurveY(solveCurveX(x));
+  return function (x) { return sampleCurveY(solveCurveX(x)); };
+}
+
+function createSpringSolver(stiffness = 120, damping = 14, mass = 1) {
+  const omega0 = Math.sqrt(stiffness / mass);
+  const zeta = damping / (2 * Math.sqrt(stiffness * mass));
+
+  return function (t) {
+    if (t >= 1) return 1;
+    if (zeta < 1) {
+      const omegaD = omega0 * Math.sqrt(1 - zeta * zeta);
+      const decay = Math.exp(-zeta * omega0 * t);
+      return 1 - decay * (Math.cos(omegaD * t) + (zeta / Math.sqrt(1 - zeta * zeta)) * Math.sin(omegaD * t));
+    }
+    return 1 - (1 + omega0 * t) * Math.exp(-omega0 * t);
   };
 }
 
-const cinematicEase = solveCubicBezier(0.16, 1, 0.3, 1);
+const MOTION_TIMING = {
+  curves: {
+    cinematic: solveCubicBezier(0.16, 1, 0.3, 1),
+    agile: solveCubicBezier(0.22, 1, 0.36, 1),
+    fluid: solveCubicBezier(0.25, 1, 0.5, 1),
+    spring: createSpringSolver(140, 16, 1),
+    linear: (t) => t
+  },
+  durations: {
+    quick: 0.35,
+    base: 0.75,
+    extended: 1.15,
+    cinematic: 1.55
+  }
+};
 
-// STEP 4: Initialize Lenis Smooth Scrolling Engine with Velocity & Momentum
+function isTouchDevice() {
+  if (typeof window === 'undefined') return false;
+  return (
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    window.matchMedia('(pointer: coarse)').matches
+  );
+}
+
+// STEP 4: Real-Time Scroll Physics Engine
+class ScrollPhysicsEngine {
+  constructor() {
+    this.y = 0;
+    this.lastY = 0;
+    this.lastTimestamp = performance.now();
+    this.velocity = 0;
+    this.smoothedVelocity = 0;
+    this.direction = 1;
+    this.isScrolling = false;
+    this.idleTimer = null;
+    this.subscribers = new Set();
+    this.isTouch = isTouchDevice();
+  }
+
+  update(currentY) {
+    const now = performance.now();
+    const dt = Math.max(1, now - this.lastTimestamp);
+    const dy = currentY - this.lastY;
+
+    const rawVelocity = dy / dt;
+    const alpha = 0.25;
+    this.smoothedVelocity = alpha * rawVelocity + (1 - alpha) * this.smoothedVelocity;
+    this.velocity = rawVelocity;
+
+    if (Math.abs(dy) > 1.5) {
+      this.direction = dy > 0 ? 1 : -1;
+    }
+
+    this.y = currentY;
+    this.lastY = currentY;
+    this.lastTimestamp = now;
+
+    if (!this.isScrolling && Math.abs(rawVelocity) > 0.02) {
+      this.isScrolling = true;
+      this.notifyStateChange(true);
+    }
+
+    clearTimeout(this.idleTimer);
+    this.idleTimer = setTimeout(() => {
+      this.isScrolling = false;
+      this.velocity = 0;
+      this.smoothedVelocity = 0;
+      this.notifyStateChange(false);
+    }, 140);
+
+    for (const sub of this.subscribers) {
+      sub({
+        y: this.y,
+        velocity: this.velocity,
+        smoothedVelocity: this.smoothedVelocity,
+        direction: this.direction,
+        isScrolling: this.isScrolling,
+        isTouch: this.isTouch
+      });
+    }
+  }
+
+  notifyStateChange(active) {
+    if (typeof document === 'undefined') return;
+    const root = document.documentElement;
+    root.dataset.scrolling = active ? 'true' : 'false';
+    root.dataset.scrollDirection = this.direction === 1 ? 'down' : 'up';
+  }
+
+  subscribe(callback) {
+    this.subscribers.add(callback);
+    return () => this.subscribers.delete(callback);
+  }
+
+  getDynamicDuration(baseDuration = 1.0) {
+    const v = Math.abs(this.smoothedVelocity);
+    const speedFactor = 1 + Math.min(2.5, v * 0.8);
+    return Math.max(0.35, baseDuration / speedFactor);
+  }
+}
+
+const physicsEngine = new ScrollPhysicsEngine();
+
+// STEP 5: Initialize Lenis with Adaptive Device Physics Profile
 let lenisInstance = null;
-let currentVelocity = 0;
-let isScrollingActive = false;
-let scrollEndTimer = null;
 
 if (typeof window !== 'undefined' && window.Lenis) {
   lenisInstance = new window.Lenis({
-    duration: 1.3, // Weight-based glide duration
-    easing: cinematicEase, // Master cubic-bezier(0.16, 1, 0.3, 1) curve
+    duration: 1.25,
+    easing: MOTION_TIMING.curves.cinematic,
     orientation: 'vertical',
     gestureOrientation: 'vertical',
     smoothWheel: true,
-    wheelMultiplier: 0.95, // Calibrated to eliminate mousewheel micro-stutters
-    syncTouch: true, // Enables buttery smooth momentum scrolling on mobile touch
-    syncTouchLerp: 0.08, // Buttery drag-and-glide momentum interpolation
-    touchInertiaExponent: 1.65, // Gentle deceleration curve upon finger release
-    touchMultiplier: 1.0, // 1:1 direct tactile finger tracking
+    wheelMultiplier: 0.95,
+    // Adaptive touch physics:
+    // When false on touch screens, allows the device's native 120Hz GPU compositor to pan
+    // with 0ms drag resistance, completely eliminating the "heavy / thick sludge" feeling!
+    syncTouch: false,
+    touchMultiplier: 1.0,
     infinite: false,
     anchors: false,
     overscroll: true
   });
 
-  const rootDoc = document.documentElement;
-
-  // Real-time Velocity & Direction State Tracking
   lenisInstance.on('scroll', (event) => {
+    physicsEngine.update(event.scroll);
+
     if (window.ScrollTrigger) {
       window.ScrollTrigger.update();
     }
-
-    currentVelocity = event.velocity || 0;
-    const direction = event.direction === 1 ? 'down' : 'up';
-
-    if (rootDoc.dataset.scrollDirection !== direction) {
-      rootDoc.dataset.scrollDirection = direction;
-    }
-
-    if (!isScrollingActive && Math.abs(currentVelocity) > 0.05) {
-      isScrollingActive = true;
-      rootDoc.dataset.scrolling = 'true';
-    }
-
-    clearTimeout(scrollEndTimer);
-    scrollEndTimer = setTimeout(() => {
-      isScrollingActive = false;
-      rootDoc.dataset.scrolling = 'false';
-    }, 120);
   });
 
   if (window.gsap) {
@@ -451,18 +536,15 @@ if (window.gsap && window.ScrollTrigger) {
 
   const MOTION_CONFIG = {
     ease: {
-      cinematic: cinematicEase,
+      cinematic: MOTION_TIMING.curves.cinematic,
+      agile: MOTION_TIMING.curves.agile,
+      spring: MOTION_TIMING.curves.spring,
       smooth: 'power2.out',
       expo: 'power4.out',
       gentle: 'power1.out',
       none: 'none'
     },
-    duration: {
-      quick: 0.45,
-      base: 0.85,
-      extended: 1.25,
-      cinematic: 1.65
-    }
+    duration: MOTION_TIMING.durations
   };
 
   window.gsap.defaults({
