@@ -1,29 +1,33 @@
 /**
  * ============================================================================
  * PAJULGAN — Architecture & Engineering
- * Production Application Script
+ * Production Application Script — Professional Motion & Cinematic Scrolling Engine
+ * File: app.js
  * ============================================================================
  *
  * Senior Mentorship Architecture Sequence:
  *
  * 1st — Foundation Code
- * - DOM cache & utility helpers
- * - Lenis smooth momentum scroll engine with lag-smoothing synchronization
- * - Mobile navigation & accessible anchor scrolling
+ * - Centralized DOM cache & utility helpers.
+ * - Mathematical cubic-bezier(0.16, 1, 0.3, 1) solver.
+ * - Lenis 1.3+ smooth momentum scroll engine with dynamic velocity tracking.
+ * - Mobile navigation & accessible anchor scrolling.
  *
  * 2nd — Core Functionality
- * - Preloader curtain sequence
- * - Accessible modal dialogs (Project detail & Project brief)
- * - Project brief generator and client-side download
+ * - Preloader curtain sequence.
+ * - Accessible modal dialogs (Project detail & Project brief).
+ * - Project brief generator and client-side download.
  *
  * 3rd — Enhancement, Animation & Optimization
- * - Hero pinned liquid ink showcase (0..850px scrub runway)
- * - Kinetic word & character opacity reveal
- * - Calibrated section fade-up entrances (85vh threshold with bi-directional reverse)
- * - Selected works horizontal scroll track pin (desktop) & responsive vertical stack
- * - Services progressive accordion disclosure (74vh threshold & GPU height expansion)
- * - Sticky process crossfade showcase (4-phase architectural methodology)
- * - Centered footer liquid ink displacement mask (80vh threshold & pointer tracking)
+ * - Centralized MOTION_SYSTEM architecture & reusable animation presets.
+ * - Architectural split-line heading reveals with 3D tilt & overflow clip.
+ * - Hero Holographic Drafting Table Parallax (multi-plane depth across CAD elements).
+ * - Kinetic word & character opacity reveal in Studio.
+ * - Selected Works 3D Card Aperture Parallax (horizontal track counter-pan + scale).
+ * - Floating Architectural Section Tags (differential vertical velocity).
+ * - Progressive service accordion disclosure with debounced refresh.
+ * - Sticky 4-phase architectural process crossfade.
+ * - Centered footer liquid ink displacement mask & pointer attraction physics.
  * ============================================================================
  */
 
@@ -54,8 +58,12 @@ const DOM = {
   approachHead: document.querySelector('.approach-head'),
   contactSection: document.querySelector('.contact.section'),
   processVisual: document.querySelector('.process-visual'),
-  processImages: gsap?.utils?.toArray ? gsap.utils.toArray('.process-img') : Array.from(document.querySelectorAll('.process-img')),
-  processSteps: gsap?.utils?.toArray ? gsap.utils.toArray('.process-step') : Array.from(document.querySelectorAll('.process-step')),
+  processImages: window.gsap?.utils?.toArray
+    ? window.gsap.utils.toArray('.process-img')
+    : Array.from(document.querySelectorAll('.process-img')),
+  processSteps: window.gsap?.utils?.toArray
+    ? window.gsap.utils.toArray('.process-step')
+    : Array.from(document.querySelectorAll('.process-step')),
   processCurrent: document.querySelector('.process-current'),
   processCaption: document.querySelector('.process-caption'),
   footerWord: document.querySelector('.ink-footer-word'),
@@ -71,7 +79,13 @@ const DOM = {
   briefDialog: document.querySelector('#brief-dialog'),
   briefOpen: document.querySelector('#brief-open'),
   briefForm: document.querySelector('#brief-form'),
-  formStatus: document.querySelector('#form-status')
+  formStatus: document.querySelector('#form-status'),
+  sectionTags: document.querySelectorAll('.section-tag'),
+  drawingTop: document.querySelector('.drawing-top'),
+  drawingBottom: document.querySelector('.drawing-bottom'),
+  drawingLabel: document.querySelector('.drawing-label'),
+  heroCopy: document.querySelector('.hero-copy'),
+  building: document.querySelector('#building')
 };
 
 // Update copyright year dynamically
@@ -85,7 +99,6 @@ if (DOM.year) {
 // Tricky logic:
 // Toggling 'body.nav-open' allows CSS to lock the viewport, while pausing Lenis ensures
 // touch swipe momentum cannot scroll the page behind the 100vh overlay.
-// TODO: Test touch-drag responsiveness on mobile Safari iOS with address bar retraction.
 function closeMenu() {
   if (!DOM.nav || !DOM.menuButton) return;
   DOM.nav.classList.remove('open');
@@ -113,43 +126,128 @@ if (DOM.menuButton && DOM.nav) {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeMenu();
   });
-}
 
-// STEP 3: Initialize Lenis Smooth Scrolling Engine
-// Why this code exists:
-// Creates silk-smooth inertial momentum scrolling. We synchronize Lenis with GSAP's ticker
-// and configure lagSmoothing(500, 33) to cushion any dropped frames gracefully.
-let lenisInstance = null;
-
-if (typeof window !== 'undefined' && window.Lenis) {
-  lenisInstance = new Lenis({
-    duration: 1.25, // Luxurious, graceful momentum deceleration
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Smooth exponential ease-out
-    smoothWheel: true,
-    wheelMultiplier: 1.0, // Soft, non-aggressive wheel response for silk-smooth trackpad & mousewheel
-    touchMultiplier: 1.25,
-    infinite: false,
-    anchors: false
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 600 && document.body.classList.contains('nav-open')) {
+      closeMenu();
+    }
   });
 
-  // Connect Lenis scroll events to ScrollTrigger ticker
-  if (window.ScrollTrigger) {
-    lenisInstance.on('scroll', ScrollTrigger.update);
+  window.addEventListener('orientationchange', () => {
+    closeMenu();
+  });
+}
+
+// STEP 3: Mathematical Cubic-Bezier Easing Solver (cubic-bezier(0.16, 1, 0.3, 1))
+// Why: Provides exact physics-based acceleration and deceleration curves to JS loops.
+function solveCubicBezier(x1, y1, x2, y2) {
+  const ax = 1 - 3 * x2 + 3 * x1;
+  const bx = 3 * x2 - 6 * x1;
+  const cx = 3 * x1;
+
+  const ay = 1 - 3 * y2 + 3 * y1;
+  const by = 3 * y2 - 6 * y1;
+  const cy = 3 * y1;
+
+  function sampleCurveX(t) {
+    return ((ax * t + bx) * t + cx) * t;
+  }
+  function sampleCurveY(t) {
+    return ((ay * t + by) * t + cy) * t;
+  }
+  function sampleCurveDerivativeX(t) {
+    return (3 * ax * t + 2 * bx) * t + cx;
   }
 
-  // Drive Lenis updates directly through GSAP's internal requestAnimationFrame ticker
+  function solveCurveX(x) {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    let t = x;
+    for (let i = 0; i < 8; i++) {
+      const xSample = sampleCurveX(t) - x;
+      if (Math.abs(xSample) < 1e-6) return t;
+      const dX = sampleCurveDerivativeX(t);
+      if (Math.abs(dX) < 1e-6) break;
+      t -= xSample / dX;
+    }
+    let t0 = 0;
+    let t1 = 1;
+    t = x;
+    while (t0 < t1) {
+      const xSample = sampleCurveX(t);
+      if (Math.abs(xSample - x) < 1e-6) return t;
+      if (x > xSample) t0 = t;
+      else t1 = t;
+      t = (t1 + t0) * 0.5;
+      if (t1 - t0 < 1e-6) break;
+    }
+    return t;
+  }
+
+  return function (x) {
+    return sampleCurveY(solveCurveX(x));
+  };
+}
+
+const cinematicEase = solveCubicBezier(0.16, 1, 0.3, 1);
+
+// STEP 4: Initialize Lenis Smooth Scrolling Engine with Velocity & Momentum
+let lenisInstance = null;
+let currentVelocity = 0;
+let isScrollingActive = false;
+let scrollEndTimer = null;
+
+if (typeof window !== 'undefined' && window.Lenis) {
+  lenisInstance = new window.Lenis({
+    duration: 1.3, // Weight-based glide duration
+    easing: cinematicEase, // Master cubic-bezier(0.16, 1, 0.3, 1) curve
+    orientation: 'vertical',
+    gestureOrientation: 'vertical',
+    smoothWheel: true,
+    wheelMultiplier: 0.95, // Calibrated to eliminate mousewheel micro-stutters
+    syncTouch: true, // Enables buttery smooth momentum scrolling on mobile touch
+    syncTouchLerp: 0.08, // Buttery drag-and-glide momentum interpolation
+    touchInertiaExponent: 1.65, // Gentle deceleration curve upon finger release
+    touchMultiplier: 1.0, // 1:1 direct tactile finger tracking
+    infinite: false,
+    anchors: false,
+    overscroll: true
+  });
+
+  const rootDoc = document.documentElement;
+
+  // Real-time Velocity & Direction State Tracking
+  lenisInstance.on('scroll', (event) => {
+    if (window.ScrollTrigger) {
+      window.ScrollTrigger.update();
+    }
+
+    currentVelocity = event.velocity || 0;
+    const direction = event.direction === 1 ? 'down' : 'up';
+
+    if (rootDoc.dataset.scrollDirection !== direction) {
+      rootDoc.dataset.scrollDirection = direction;
+    }
+
+    if (!isScrollingActive && Math.abs(currentVelocity) > 0.05) {
+      isScrollingActive = true;
+      rootDoc.dataset.scrolling = 'true';
+    }
+
+    clearTimeout(scrollEndTimer);
+    scrollEndTimer = setTimeout(() => {
+      isScrollingActive = false;
+      rootDoc.dataset.scrolling = 'false';
+    }, 120);
+  });
+
   if (window.gsap) {
-    gsap.ticker.add((time) => lenisInstance.raf(time * 1000));
-    // Clamps frame-time spikes so animations never jerk or skip when heavy DOM calculations occur
-    gsap.ticker.lagSmoothing(500, 33);
+    window.gsap.ticker.add((time) => lenisInstance.raf(time * 1000));
+    window.gsap.ticker.lagSmoothing(500, 33);
   }
 }
 
-// STEP 2: Unified Internal Anchor Link Smooth Scrolling
-// Why this code exists:
-// Replaces disjointed click handlers with a single, consolidated navigation controller.
-// Handles menu closing, smooth momentum scrolling via Lenis, URL hash persistence,
-// and accessible focus management without jarring browser jumps.
+// STEP 5: Unified Internal Anchor Link Smooth Scrolling
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener('click', (e) => {
     const targetId = anchor.getAttribute('href');
@@ -164,7 +262,7 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     if (lenisInstance) {
       lenisInstance.scrollTo(targetElement, {
         offset: -40,
-        duration: 1.4,
+        duration: 1.25,
         onComplete: () => {
           history.replaceState(null, '', targetId);
           targetElement.setAttribute('tabindex', '-1');
@@ -187,10 +285,10 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 if (DOM.intro && window.gsap) {
   DOM.intro.classList.add('active');
 
-  const introTimeline = gsap.timeline({
+  const introTimeline = window.gsap.timeline({
     onComplete: () => {
       DOM.intro.remove();
-      if (window.ScrollTrigger) ScrollTrigger.refresh();
+      if (window.ScrollTrigger) window.ScrollTrigger.refresh();
     }
   });
 
@@ -246,7 +344,6 @@ function closeModal(dialogElement) {
   }
 }
 
-// Bind project cards
 document.querySelectorAll('[data-project]').forEach((button) => {
   button.addEventListener('click', () => {
     const projectIndex = Number(button.dataset.project);
@@ -265,12 +362,10 @@ document.querySelectorAll('[data-project]').forEach((button) => {
   });
 });
 
-// Bind brief open trigger
 if (DOM.briefOpen && DOM.briefDialog) {
   DOM.briefOpen.addEventListener('click', () => openModal(DOM.briefDialog));
 }
 
-// Transition from project modal to brief modal
 if (DOM.projectEnquire && DOM.projectDialog && DOM.briefDialog) {
   DOM.projectEnquire.addEventListener('click', () => {
     closeModal(DOM.projectDialog);
@@ -278,7 +373,6 @@ if (DOM.projectEnquire && DOM.projectDialog && DOM.briefDialog) {
   });
 }
 
-// Close listeners for all dialog elements
 document.querySelectorAll('dialog').forEach((dialog) => {
   const closeBtn = dialog.querySelector('.dialog-close');
   if (closeBtn) {
@@ -304,7 +398,7 @@ document.querySelectorAll('dialog').forEach((dialog) => {
   });
 });
 
-// STEP 2: Project Brief Export Controller
+// STEP 3: Project Brief Export Controller
 if (DOM.briefForm) {
   DOM.briefForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -348,12 +442,37 @@ if (DOM.briefForm) {
 
 if (window.gsap && window.ScrollTrigger) {
   document.body.classList.add('motion-ready');
-  gsap.registerPlugin(ScrollTrigger);
-  gsap.defaults({ ease: 'power2.out', duration: 1.05 });
+  window.gsap.registerPlugin(window.ScrollTrigger);
 
-  // STEP 4: Global Scroll Progress Bar
+  window.ScrollTrigger.config({
+    limitCallbacks: true,
+    syncInterval: 100
+  });
+
+  const MOTION_CONFIG = {
+    ease: {
+      cinematic: cinematicEase,
+      smooth: 'power2.out',
+      expo: 'power4.out',
+      gentle: 'power1.out',
+      none: 'none'
+    },
+    duration: {
+      quick: 0.45,
+      base: 0.85,
+      extended: 1.25,
+      cinematic: 1.65
+    }
+  };
+
+  window.gsap.defaults({
+    ease: 'power3.out',
+    duration: MOTION_CONFIG.duration.base
+  });
+
+  // STEP 1: Global Viewport Scroll Progress Bar
   if (DOM.scrollProgress) {
-    gsap.to(DOM.scrollProgress, {
+    window.gsap.to(DOM.scrollProgress, {
       scaleX: 1,
       ease: 'none',
       scrollTrigger: {
@@ -364,36 +483,79 @@ if (window.gsap && window.ScrollTrigger) {
     });
   }
 
-  // STEP 4: Hero Section Liquid Ink Showcase & Responsive Pin Controller
-  // Why this code exists:
-  // On desktop screens (min-width: 601px), pins '#heroPinWrapper' for 850px of dedicated scrub runway
-  // while the liquid ink mask morphs from CAD sketch to photorealistic render.
-  // On mobile view (max-width: 600px), pinning is completely removed ('pin: false' / unpinned)
-  // so the viewport flows naturally without hijacking mobile scroll.
-  // Tricky logic:
-  // 'gsap.matchMedia()' automatically cleans up ScrollTriggers, resets pinned spacers,
-  // and recalculates timeline scrub bounds when switching breakpoints or rotating mobile devices.
-  // TODO: Add touch friction modulation for high-refresh 120Hz mobile displays.
-  const responsiveMedia = gsap.matchMedia();
+  const responsiveMedia = window.gsap.matchMedia();
 
-  // Desktop (min-width: 601px): Pinned Hero with 850px scrub runway
+  // STEP 2: Architectural Split-Line Heading Reveal Preset
+  function splitLineReveal(element, triggerStart = 'top 85%') {
+    if (!element) return;
+    const rawHtml = element.innerHTML.trim();
+    const lines = rawHtml.split(/<br\s*\/?>/i);
+
+    if (lines.length > 1) {
+      element.innerHTML = lines
+        .map((line) => `<span class="motion-line"><span class="motion-line-inner">${line.trim()}</span></span>`)
+        .join('');
+
+      const inners = element.querySelectorAll('.motion-line-inner');
+      window.gsap.fromTo(
+        inners,
+        {
+          yPercent: 110,
+          rotateX: 4,
+          opacity: 0
+        },
+        {
+          yPercent: 0,
+          rotateX: 0,
+          opacity: 1,
+          duration: MOTION_CONFIG.duration.extended,
+          stagger: 0.12,
+          ease: 'power4.out',
+          scrollTrigger: {
+            trigger: element,
+            start: triggerStart,
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+    } else {
+      window.gsap.fromTo(
+        element,
+        { y: 45, opacity: 0, scale: 0.98 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: MOTION_CONFIG.duration.extended,
+          ease: 'power4.out',
+          scrollTrigger: {
+            trigger: element,
+            start: triggerStart,
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+    }
+  }
+
+  // STEP 3: Hero Holographic Drafting Table Parallax (Desktop)
   responsiveMedia.add('(min-width: 601px)', () => {
     if (DOM.heroInkPath && DOM.heroPinWrapper) {
       const finalMaskPath = DOM.heroInkPath.dataset.valueFinal || 'M 0 1000 Q 500 1250 1000 1000 L 1000 0 L 0 0 Z';
 
-      const heroPinTimeline = gsap.timeline({
+      const heroPinTimeline = window.gsap.timeline({
         scrollTrigger: {
           trigger: DOM.heroPinWrapper,
           start: 'top top',
-          end: '+=850',
+          end: '+=900',
           pin: true,
-          scrub: 1.2,
+          scrub: 1.1,
           anticipatePin: 1,
           invalidateOnRefresh: true
         }
       });
 
-      // Morph the SVG mask curve
+      // Layer 1: Liquid SVG mask morphing from CAD wireframe to render
       heroPinTimeline.fromTo(
         DOM.heroInkPath,
         { attr: { d: 'M 0 1 Q 500 2 1000 1 L 1000 0 L 0 0 Z' } },
@@ -401,87 +563,96 @@ if (window.gsap && window.ScrollTrigger) {
         0
       );
 
-      // Subtle depth parallax during the pin scrub
-      heroPinTimeline.to(
-        '.hero-ink-mask .ink-mask-img.main img',
-        { scale: 1.03, opacity: 0.88, ease: 'none', duration: 1 },
-        0
-      );
+      // Layer 2: Midground Building subtle scale & vertical float
       heroPinTimeline.to(
         '#building',
-        { y: -15, ease: 'none', duration: 1 },
+        { y: -30, scale: 1.03, ease: 'none', duration: 1 },
         0
       );
+
+      // Layer 3: Drawing metadata background drift
+      if (DOM.drawingTop) {
+        heroPinTimeline.to(DOM.drawingTop, { y: -20, opacity: 0.7, ease: 'none', duration: 1 }, 0);
+      }
+      if (DOM.drawingBottom) {
+        heroPinTimeline.to(DOM.drawingBottom, { y: 20, opacity: 0.7, ease: 'none', duration: 1 }, 0);
+      }
+      if (DOM.drawingLabel) {
+        heroPinTimeline.to(DOM.drawingLabel, { y: -40, ease: 'none', duration: 1 }, 0);
+      }
+
+      // Layer 4: Foreground Hero Copy upward drift
+      if (DOM.heroCopy) {
+        heroPinTimeline.to(DOM.heroCopy, { y: -50, opacity: 0.85, ease: 'none', duration: 1 }, 0);
+      }
     }
   });
 
-  // Mobile (max-width: 600px): Unpinned Hero — Natural scroll flow without viewport lock
+  // Mobile Hero: Natural fluid scrub without viewport lock
   responsiveMedia.add('(max-width: 600px)', () => {
     if (DOM.heroInkPath && DOM.heroPinWrapper) {
       const finalMaskPath = DOM.heroInkPath.dataset.valueFinal || 'M 0 1000 Q 500 1250 1000 1000 L 1000 0 L 0 0 Z';
 
-      const heroMobileTimeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: DOM.heroPinWrapper,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1,
-          invalidateOnRefresh: true
-        }
-      });
-
-      heroMobileTimeline.fromTo(
+      window.gsap.fromTo(
         DOM.heroInkPath,
         { attr: { d: 'M 0 1 Q 500 2 1000 1 L 1000 0 L 0 0 Z' } },
-        { attr: { d: finalMaskPath }, ease: 'none', duration: 1 },
-        0
+        {
+          attr: { d: finalMaskPath },
+          ease: 'none',
+          scrollTrigger: {
+            trigger: DOM.heroPinWrapper,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.9,
+            invalidateOnRefresh: true
+          }
+        }
       );
     }
   });
 
-  // STEP 3: Kinetic Word & Character Opacity Reveal
-  if (DOM.wordReveals.length > 0) {
+  // STEP 4: Kinetic Word & Character Opacity Reveal
+  if (DOM.wordReveals && DOM.wordReveals.length > 0) {
     DOM.wordReveals.forEach((el) => {
       const words = el.textContent.trim().split(/\s+/);
-      el.innerHTML = words.map((word) => {
-        const chars = word.split('').map((char) => `<span class="char">${char}</span>`).join('');
-        return `<span class="word">${chars}</span>`;
-      }).join(' ');
+      el.innerHTML = words
+        .map((word) => {
+          const chars = word.split('').map((char) => `<span class="char">${char}</span>`).join('');
+          return `<span class="word">${chars}</span>`;
+        })
+        .join(' ');
 
       const chars = el.querySelectorAll('.char');
-      gsap.fromTo(
+      window.gsap.fromTo(
         chars,
-        { opacity: 0.1 },
+        { opacity: 0.12, y: 4 },
         {
           opacity: 1,
+          y: 0,
           stagger: 0.035,
           ease: 'none',
           scrollTrigger: {
             trigger: el,
-            start: 'top 80%',
+            start: 'top 82%',
             end: 'bottom 45%',
-            scrub: 0.9
+            scrub: 0.85
           }
         }
       );
     });
   }
 
-  // STEP 4: Calibrated Section Fade-Up Entrances
-  // Master Threshold: All section entrance animations calibrated to 85vh (top 85% of viewport)
-  // Master Action: 'play none none reverse' retracts smoothly when scrolling back up.
-
-  // 1. Studio Manifesto Bottom Content
+  // STEP 5: Studio Bottom Content Staggered Entrance
   if (DOM.studioBottom) {
-    gsap.fromTo(
+    window.gsap.fromTo(
       DOM.studioBottom.children,
-      { y: 35, opacity: 0 },
+      { y: 40, opacity: 0 },
       {
         y: 0,
         opacity: 1,
-        duration: 1.05,
+        duration: MOTION_CONFIG.duration.extended,
         stagger: 0.16,
-        ease: 'power2.out',
+        ease: 'power3.out',
         scrollTrigger: {
           trigger: DOM.studioBottom,
           start: 'top 85%',
@@ -491,36 +662,39 @@ if (window.gsap && window.ScrollTrigger) {
     );
   }
 
-  // 2. Work Section Heading
+  // STEP 6: Selected Works Heading Mask Reveal
   if (DOM.workHeading) {
-    gsap.fromTo(
-      DOM.workHeading.children,
-      { y: 35, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.05,
-        stagger: 0.18,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: DOM.workHeading,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
+    const headingH2 = DOM.workHeading.querySelector('h2');
+    const headingAside = DOM.workHeading.querySelector('.work-aside');
+
+    if (headingH2) splitLineReveal(headingH2, 'top 85%');
+
+    if (headingAside) {
+      window.gsap.fromTo(
+        headingAside,
+        { y: 35, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: MOTION_CONFIG.duration.base,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: DOM.workHeading,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
         }
-      }
-    );
+      );
+    }
   }
 
-  // 3. Works Horizontal Scroll Pin & Responsive Stack
-  // CRITICAL ARCHITECTURE RULE:
-  // This pin MUST be instantiated before '.services' and '.approach' triggers below!
-  // GSAP calculates pin-spacing offsets chronologically. Creating this pin first
-  // ensures all subsequent trigger positions accurately reflect the 2000px+ horizontal scroll runway.
+  // STEP 7: Works Horizontal Scroll Pin & 3D Card Aperture Parallax
   responsiveMedia.add('(min-width: 601px)', () => {
     if (!DOM.workTrack) return;
     const calculateDistance = () => Math.max(0, DOM.workTrack.scrollWidth - window.innerWidth);
 
-    gsap.to(DOM.workTrack, {
+    // Track horizontal translation
+    window.gsap.to(DOM.workTrack, {
       x: () => -calculateDistance(),
       ease: 'none',
       scrollTrigger: {
@@ -528,88 +702,130 @@ if (window.gsap && window.ScrollTrigger) {
         start: 'top top',
         end: () => `+=${calculateDistance() + 450}`,
         pin: true,
-        scrub: 1.2,
+        scrub: 1.1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           if (DOM.workProgressSpan) {
-            gsap.set(DOM.workProgressSpan, { scaleX: self.progress });
+            window.gsap.set(DOM.workProgressSpan, { scaleX: self.progress });
           }
         }
       }
     });
+
+    // Internal 3D image aperture parallax for each project card
+    document.querySelectorAll('.project').forEach((card) => {
+      const cardImg = card.querySelector('.project-image img');
+      if (cardImg) {
+        window.gsap.fromTo(
+          cardImg,
+          { xPercent: 12, scale: 1.14 },
+          {
+            xPercent: -12,
+            scale: 1.05,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: '.work',
+              start: 'top top',
+              end: () => `+=${calculateDistance() + 450}`,
+              scrub: true
+            }
+          }
+        );
+      }
+    });
   });
 
+  // Mobile: Staggered vertical cards with vertical internal image parallax
   responsiveMedia.add('(max-width: 600px)', () => {
     document.querySelectorAll('.project').forEach((el) => {
-      gsap.fromTo(
+      window.gsap.fromTo(
         el,
-        { y: 35, opacity: 0 },
+        { y: 40, opacity: 0, scale: 0.96 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.8,
-          ease: 'power2.out',
+          scale: 1,
+          duration: 0.85,
+          ease: 'power3.out',
           scrollTrigger: {
             trigger: el,
-            start: 'top 90%',
+            start: 'top 88%',
             toggleActions: 'play none none reverse'
           }
         }
       );
+
+      const cardImg = el.querySelector('.project-image img');
+      if (cardImg) {
+        window.gsap.fromTo(
+          cardImg,
+          { yPercent: -8, scale: 1.1 },
+          {
+            yPercent: 8,
+            scale: 1.02,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true
+            }
+          }
+        );
+      }
     });
   });
 
-  // 4. Services Heading (Calculated accurately AFTER .work's pin spacer)
+  // STEP 8: Floating Architectural Section Tags Parallax
+  responsiveMedia.add('(min-width: 601px)', () => {
+    if (DOM.sectionTags && DOM.sectionTags.length > 0) {
+      DOM.sectionTags.forEach((tag) => {
+        const parentSection = tag.closest('.section') || tag.parentElement;
+        if (!parentSection) return;
+
+        window.gsap.fromTo(
+          tag,
+          { y: -25 },
+          {
+            y: 25,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: parentSection,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true
+            }
+          }
+        );
+      });
+    }
+  });
+
+  // STEP 9: Services Heading & Disciplines Accordion Progressive Disclosure
   if (DOM.servicesH2) {
-    gsap.fromTo(
-      DOM.servicesH2,
-      { y: 40, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.05,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: DOM.servicesH2,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
-      }
-    );
+    splitLineReveal(DOM.servicesH2, 'top 85%');
   }
 
-  // 5. Services Section List: Progressive ScrollTrigger Open & Smooth Accordion
-  // Why this code exists:
-  // Automatically unfolds each service discipline smoothly as the user scrolls down (threshold 74vh),
-  // creating a progressive editorial disclosure experience. Retracts smoothly when scrolling back up.
-  // Tricky logic:
-  // 1. Measuring scrollHeight: We dynamically measure the exact natural height of .service-body and
-  //    animate height (0 -> targetHeight) with power2.out.
-  // 2. Debounced ScrollTrigger refresh: Synchronous refresh during scrolling pauses the render loop
-  //    and causes micro-stutters. Debouncing the refresh (250ms) ensures silky 60/120fps motion.
-  // 3. Handles both automatic ScrollTrigger thresholds (start: 'top 74%') and manual click toggles.
   if (DOM.serviceList) {
     const serviceItems = DOM.serviceList.querySelectorAll('details');
 
-    // Debounced ScrollTrigger refresh to prevent layout thrashing while scrolling
     let accordionRefreshTimer = null;
     function debouncedScrollTriggerRefresh() {
       clearTimeout(accordionRefreshTimer);
       accordionRefreshTimer = setTimeout(() => {
-        ScrollTrigger.refresh();
+        window.ScrollTrigger.refresh();
       }, 250);
     }
 
-    // Entrance fade-up for accordion items
-    gsap.fromTo(
+    window.gsap.fromTo(
       serviceItems,
-      { y: 35, opacity: 0 },
+      { y: 40, opacity: 0 },
       {
         y: 0,
         opacity: 1,
-        duration: 0.95,
+        duration: MOTION_CONFIG.duration.base,
         stagger: 0.12,
-        ease: 'power2.out',
+        ease: 'power3.out',
         scrollTrigger: {
           trigger: DOM.serviceList,
           start: 'top 85%',
@@ -626,33 +842,29 @@ if (window.gsap && window.ScrollTrigger) {
         return;
       }
 
-      // If already open and not currently tweening closed, nothing to do
-      if (item.open && !gsap.isTweening(body) && body.offsetHeight > 0) return;
+      if (item.open && !window.gsap.isTweening(body) && body.offsetHeight > 0) return;
 
-      gsap.killTweensOf(body);
-
-      // Open the container element in DOM if not open
+      window.gsap.killTweensOf(body);
       if (!item.open) {
         item.open = true;
-        gsap.set(body, { height: 0, opacity: 0, overflow: 'hidden' });
+        window.gsap.set(body, { height: 0, opacity: 0, overflow: 'hidden' });
       }
 
-      // Measure full natural scroll height
       const targetHeight = body.scrollHeight;
       const startHeight = body.offsetHeight;
-      const startOpacity = parseFloat(gsap.getProperty(body, 'opacity')) || 0;
+      const startOpacity = parseFloat(window.gsap.getProperty(body, 'opacity')) || 0;
 
-      gsap.fromTo(
+      window.gsap.fromTo(
         body,
         { height: startHeight, opacity: startOpacity, overflow: 'hidden' },
         {
           height: targetHeight,
           opacity: 1,
           duration: 0.65,
-          ease: 'power2.out',
+          ease: 'power3.out',
           overwrite: 'auto',
           onComplete: () => {
-            gsap.set(body, { height: 'auto', overflow: 'hidden' });
+            window.gsap.set(body, { height: 'auto', overflow: 'hidden' });
             debouncedScrollTriggerRefresh();
           }
         }
@@ -668,11 +880,11 @@ if (window.gsap && window.ScrollTrigger) {
         return;
       }
 
-      gsap.killTweensOf(body);
+      window.gsap.killTweensOf(body);
       const currentHeight = body.offsetHeight;
-      const currentOpacity = parseFloat(gsap.getProperty(body, 'opacity')) || 1;
+      const currentOpacity = parseFloat(window.gsap.getProperty(body, 'opacity')) || 1;
 
-      gsap.fromTo(
+      window.gsap.fromTo(
         body,
         { height: currentHeight, opacity: currentOpacity, overflow: 'hidden' },
         {
@@ -683,20 +895,19 @@ if (window.gsap && window.ScrollTrigger) {
           overwrite: 'auto',
           onComplete: () => {
             item.open = false;
-            gsap.set(body, { clearProps: 'height,opacity,overflow' });
+            window.gsap.set(body, { clearProps: 'height,opacity,overflow' });
             debouncedScrollTriggerRefresh();
           }
         }
       );
     }
 
-    // Bind manual click toggles and automatic scroll opening
     serviceItems.forEach((item) => {
       const summary = item.querySelector('summary');
       if (summary) {
         summary.addEventListener('click', (e) => {
           e.preventDefault();
-          if (item.open && !gsap.isTweening(item.querySelector('.service-body'))) {
+          if (item.open && !window.gsap.isTweening(item.querySelector('.service-body'))) {
             closeServiceItem(item);
           } else {
             openServiceItem(item);
@@ -704,29 +915,31 @@ if (window.gsap && window.ScrollTrigger) {
         });
       }
 
-      ScrollTrigger.create({
-        trigger: item,
-        start: 'top 74%', // Triggers open smoothly when summary reaches 74% viewport height
-        onEnter: () => openServiceItem(item),
-        onLeaveBack: () => closeServiceItem(item)
+      responsiveMedia.add('(min-width: 601px)', () => {
+        window.ScrollTrigger.create({
+          trigger: item,
+          start: 'top 74%',
+          onEnter: () => openServiceItem(item),
+          onLeaveBack: () => closeServiceItem(item)
+        });
       });
     });
   }
 
-  // 6. Approach Heading
+  // STEP 10: Approach Heading & Methodology Section
   if (DOM.approachHead) {
     const approachEyebrow = DOM.approachHead.querySelector('.eyebrow');
     const approachH2 = DOM.approachHead.querySelector('h2');
 
     if (approachEyebrow) {
-      gsap.fromTo(
+      window.gsap.fromTo(
         approachEyebrow,
         { y: 25, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.9,
-          ease: 'power2.out',
+          duration: MOTION_CONFIG.duration.base,
+          ease: 'power3.out',
           scrollTrigger: {
             trigger: DOM.approachHead,
             start: 'top 85%',
@@ -736,17 +949,66 @@ if (window.gsap && window.ScrollTrigger) {
       );
     }
 
-    if (approachH2) {
-      gsap.fromTo(
-        approachH2,
-        { y: 40, opacity: 0 },
+    if (approachH2) splitLineReveal(approachH2, 'top 85%');
+  }
+
+  // STEP 11: Contact Section Entrance
+  if (DOM.contactSection) {
+    const contactTag = DOM.contactSection.querySelector('.section-tag');
+    const contactEyebrow = DOM.contactSection.querySelector('.eyebrow');
+    const contactH2 = DOM.contactSection.querySelector('h2');
+    const contactBottom = DOM.contactSection.querySelector('.contact-bottom');
+
+    if (contactTag) {
+      window.gsap.fromTo(
+        contactTag,
+        { y: 30, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 1.05,
-          ease: 'power2.out',
+          duration: MOTION_CONFIG.duration.base,
+          ease: 'power3.out',
           scrollTrigger: {
-            trigger: DOM.approachHead,
+            trigger: DOM.contactSection,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+    }
+
+    if (contactEyebrow) {
+      window.gsap.fromTo(
+        contactEyebrow,
+        { y: 25, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: MOTION_CONFIG.duration.base,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: DOM.contactSection,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+    }
+
+    if (contactH2) splitLineReveal(contactH2, 'top 85%');
+
+    if (contactBottom) {
+      window.gsap.fromTo(
+        contactBottom.children,
+        { y: 35, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: MOTION_CONFIG.duration.extended,
+          stagger: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: contactBottom,
             start: 'top 85%',
             toggleActions: 'play none none reverse'
           }
@@ -755,34 +1017,7 @@ if (window.gsap && window.ScrollTrigger) {
     }
   }
 
-  // 7. Contact Section Entrance
-  if (DOM.contactSection) {
-    const contactElements = [
-      DOM.contactSection.querySelector('.section-tag'),
-      DOM.contactSection.querySelector('.eyebrow'),
-      DOM.contactSection.querySelector('h2'),
-      DOM.contactSection.querySelector('.contact-bottom')
-    ].filter(Boolean);
-
-    gsap.fromTo(
-      contactElements,
-      { y: 40, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.05,
-        stagger: 0.14,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: DOM.contactSection,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
-      }
-    );
-  }
-
-  // STEP 3: Sticky Process Image Showcase Controller (4-Phase Architectural Methodology)
+  // STEP 12: Sticky Process Image Showcase Controller (4-Phase Methodology)
   const phaseLabels = [
     'PHASE // 01 DISCOVER',
     'PHASE // 02 DESIGN',
@@ -801,22 +1036,20 @@ if (window.gsap && window.ScrollTrigger) {
     DOM.processImages.forEach((img, i) => {
       if (i === targetIndex) {
         img.classList.add('active');
-        gsap.to(img, {
+        window.gsap.to(img, {
           opacity: 1,
           scale: 1,
-          filter: 'saturate(1) brightness(1)',
-          duration: 0.9,
-          ease: 'power2.out',
+          duration: 0.65,
+          ease: 'power3.out',
           overwrite: 'auto'
         });
       } else {
         img.classList.remove('active');
-        gsap.to(img, {
+        window.gsap.to(img, {
           opacity: 0,
           scale: 1.04,
-          filter: 'saturate(0.65) brightness(0.92)',
-          duration: 0.8,
-          ease: 'power2.out',
+          duration: 0.55,
+          ease: 'power3.out',
           overwrite: 'auto'
         });
       }
@@ -830,29 +1063,19 @@ if (window.gsap && window.ScrollTrigger) {
     }
   }
 
-  // STEP 4: Bind ScrollTriggers to each process step & synchronize image switches
-  // Why this code exists:
-  // Dynamically crossfades the pinned process visual imagery and updates chapter metadata
-  // as the user scrolls each methodology phase into and out of the active reading zone.
-  // Tricky logic:
-  // 1. 'start: top 55%' triggers on forward scroll when the step enters below the pinned visual.
-  // 2. 'onEnterBack' re-activates phase 'i' when scrolling upward from a later phase.
-  // 3. 'onLeaveBack' drops back to 'Math.max(0, i - 1)' when the step scrolls back below the threshold,
-  //    guaranteeing bidirectional synchronization without stuck or skipped phases.
-  // TODO: Add micro-haptic pulse on mobile devices when phase index changes.
   DOM.processSteps.forEach((step, i) => {
-    gsap.from(step, {
+    window.gsap.from(step, {
       opacity: 0.25,
-      y: 35,
+      y: 40,
       scrollTrigger: {
         trigger: step,
         start: 'top 85%',
         end: 'top 45%',
-        scrub: 1
+        scrub: 0.9
       }
     });
 
-    ScrollTrigger.create({
+    window.ScrollTrigger.create({
       trigger: step,
       start: 'top 55%',
       end: 'bottom 55%',
@@ -862,25 +1085,24 @@ if (window.gsap && window.ScrollTrigger) {
     });
   });
 
-  // STEP 4: Centered Footer Liquid Ink Displacement Mask
+  // STEP 13: Centered Footer Liquid Ink Displacement Mask & Pointer Attraction
   if (DOM.footerWord && DOM.footerInkCircle) {
-    gsap.fromTo(
+    window.gsap.fromTo(
       DOM.footerInkCircle,
       { attr: { r: 0, cx: 500, cy: 110 } },
       {
-        attr: { r: 720 },
+        attr: { r: 750 },
         ease: 'power2.out',
         scrollTrigger: {
           trigger: DOM.footerWordFallback || DOM.footerWord,
-          start: 'top 80%', // Threshold: 80vh of viewport
+          start: 'top 80%',
           end: 'bottom 45%',
-          scrub: 1.2, // Silk-smooth retraction and expansion
+          scrub: 1.2,
           invalidateOnRefresh: true
         }
       }
     );
 
-    // Dynamic pointer tracking and ripple pulses
     let lastRippleTimestamp = 0;
 
     const triggerPointerInk = (clientX, clientY) => {
@@ -890,22 +1112,20 @@ if (window.gsap && window.ScrollTrigger) {
       const svgX = Math.max(0, Math.min(1000, ((clientX - rect.left) / rect.width) * 1000));
       const svgY = Math.max(0, Math.min(220, ((clientY - rect.top) / rect.height) * 220));
 
-      // Drift main circle center towards cursor
-      gsap.to(DOM.footerInkCircle, {
+      window.gsap.to(DOM.footerInkCircle, {
         attr: { cx: svgX, cy: svgY },
         duration: 0.6,
-        ease: 'power2.out',
+        ease: 'power3.out',
         overwrite: 'auto'
       });
 
-      // Expanding ripple pulse
       if (DOM.footerInkPulse) {
-        gsap.killTweensOf(DOM.footerInkPulse);
-        gsap.fromTo(
+        window.gsap.killTweensOf(DOM.footerInkPulse);
+        window.gsap.fromTo(
           DOM.footerInkPulse,
           { attr: { cx: svgX, cy: svgY, r: 15 }, opacity: 0.85 },
           {
-            attr: { r: 340 },
+            attr: { r: 350 },
             opacity: 0,
             duration: 0.95,
             ease: 'power3.out'
@@ -915,27 +1135,33 @@ if (window.gsap && window.ScrollTrigger) {
     };
 
     DOM.footerWord.addEventListener('pointerenter', (e) => triggerPointerInk(e.clientX, e.clientY));
-
     DOM.footerWord.addEventListener('pointermove', (e) => {
       const now = performance.now();
-      if (now - lastRippleTimestamp > 75) {
+      if (now - lastRippleTimestamp > 65) {
         lastRippleTimestamp = now;
         triggerPointerInk(e.clientX, e.clientY);
       }
     });
-
     DOM.footerWord.addEventListener('pointerdown', (e) => triggerPointerInk(e.clientX, e.clientY));
   }
 
-  // STEP 5: Asset Load & Font-Ready Recalibration
+  // STEP 14: High-Performance Asset Load & Font-Ready Recalibration
+  let imageRefreshTimer = null;
+  const debouncedGlobalRefresh = () => {
+    clearTimeout(imageRefreshTimer);
+    imageRefreshTimer = setTimeout(() => {
+      window.ScrollTrigger.refresh();
+    }, 150);
+  };
+
   document.querySelectorAll('img').forEach((img) => {
     if (img.complete) return;
-    img.addEventListener('load', () => ScrollTrigger.refresh());
+    img.addEventListener('load', debouncedGlobalRefresh);
   });
 
   if (document.fonts?.ready) {
-    document.fonts.ready.then(() => ScrollTrigger.refresh());
+    document.fonts.ready.then(debouncedGlobalRefresh);
   }
 
-  window.addEventListener('load', () => ScrollTrigger.refresh());
+  window.addEventListener('load', debouncedGlobalRefresh);
 }

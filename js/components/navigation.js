@@ -49,6 +49,16 @@ export function initNavigation() {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeMenu();
     });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 600 && document.body.classList.contains('nav-open')) {
+        closeMenu();
+      }
+    });
+
+    window.addEventListener('orientationchange', () => {
+      closeMenu();
+    });
   }
 
   // Unified Internal Anchor Link Smooth Scrolling
@@ -67,7 +77,7 @@ export function initNavigation() {
       if (lenis) {
         lenis.scrollTo(targetElement, {
           offset: -40,
-          duration: 1.35,
+          duration: 1.2,
           onComplete: () => {
             history.replaceState(null, '', targetId);
             targetElement.setAttribute('tabindex', '-1');

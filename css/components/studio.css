@@ -14,6 +14,8 @@
   padding-right: 55px;
   color: var(--muted);
   font-size: 9px;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .section-tag > span:last-child,

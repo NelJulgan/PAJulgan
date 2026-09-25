@@ -139,11 +139,18 @@ html.lenis body {
 
 /* Mobile Devices (max-width: 600px) */
 @media (max-width: 600px) {
-  /* STEP 5: Optimize performance and responsiveness — Remove mobile scrollbars */
+  /* STEP 5: Optimize performance and responsiveness — Silk smooth mobile touch scroll */
   html,
   body {
     scrollbar-width: none;
     -ms-overflow-style: none;
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Disable heavy procedural SVG fractal noise overlay on mobile to save GPU composite memory */
+  body::after {
+    display: none;
   }
 
   ::-webkit-scrollbar {
@@ -353,11 +360,14 @@ html.lenis body {
     margin: 30px 0 22px;
     min-height: 300px;
     padding: 28px 0 33px;
+    touch-action: pan-y;
   }
   #building {
     width: 104%;
     margin-left: -2%;
     aspect-ratio: 1.6;
+    pointer-events: none;
+    touch-action: pan-y;
   }
   .drawing-top {
     font-size: 7px;
@@ -528,6 +538,18 @@ html.lenis body {
     border: 1px solid #5c5d51;
     background: #1c1d19;
     box-shadow: 0 14px 38px rgba(0, 0, 0, 0.65);
+    touch-action: pan-y;
+  }
+  .process-images,
+  .process-img,
+  .process-visual-overlay {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .process-img {
+    will-change: opacity, transform;
+    transform: translateZ(0);
   }
   .process-steps {
     position: relative;

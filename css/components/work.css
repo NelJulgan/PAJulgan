@@ -45,6 +45,9 @@ body:not(.motion-ready) .project-track {
   flex: none;
   border: 0;
   cursor: pointer;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .project-image {
@@ -53,6 +56,8 @@ body:not(.motion-ready) .project-track {
   min-height: 250px;
   overflow: hidden;
   background: #c6c5bc;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .project-image img {
@@ -60,12 +65,13 @@ body:not(.motion-ready) .project-track {
   height: 100%;
   object-fit: cover;
   filter: saturate(0.35);
-  transition: filter 0.6s ease, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  transform-origin: center center;
+  will-change: transform, filter;
+  transition: filter 0.6s ease;
   display: block;
 }
 
 .project:hover img {
-  transform: scale(1.035);
   filter: saturate(0.85);
 }
 

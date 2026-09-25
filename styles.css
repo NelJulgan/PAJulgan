@@ -40,6 +40,16 @@
   --mono: 'IBM Plex Mono', monospace;
   --sans: 'DM Sans', Arial, sans-serif;
   --codec: 'Codec Cold', 'Codec Cold ExtraBold', var(--sans);
+
+  /* Professional Motion System Tokens */
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-smooth: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-quick: 0.35s;
+  --duration-normal: 0.75s;
+  --duration-extended: 1.15s;
+  --duration-cinematic: 1.6s;
 }
 
 /* STEP 2: Add global resets, base typography, and focus accessibility */
@@ -51,6 +61,7 @@
 
 html {
   scroll-padding-top: 90px;
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -60,6 +71,8 @@ body {
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Subtle architectural paper noise texture overlay */
@@ -204,6 +217,37 @@ img {
   justify-content: center;
   line-height: 1;
 }
+
+/* ==============================================================================
+   1st — Foundation Code: Motion System Utilities & GPU Layer Promotion
+   ============================================================================== */
+
+/* STEP 1: Split-line reveal masking wrappers */
+.motion-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.motion-line-inner {
+  display: block;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+}
+
+/* STEP 2: Dedicated GPU Compositor Layer Promotion */
+.gpu-layer {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* STEP 3: Active Scroll State Optimization */
+html[data-scrolling="true"] * {
+  pointer-events: auto;
+}
+
 
 /* ==========================================================================
    2nd — Core Functionality: Layout Components & UI Sections
@@ -506,6 +550,8 @@ h1 em {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  perspective: 1200px;
+  transform-style: preserve-3d;
   background:
     linear-gradient(90deg, transparent calc(50% - 0.5px), #ccc8bc60 50%, transparent calc(50% + 0.5px)),
     linear-gradient(transparent calc(50% - 0.5px), #ccc8bc60 50%, transparent calc(50% + 0.5px));
@@ -518,6 +564,8 @@ h1 em {
   color: var(--muted);
   font-size: 8px;
   align-items: center;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .drawing-top {
@@ -539,6 +587,8 @@ h1 em {
   margin-left: 0;
   aspect-ratio: 1.5;
   position: relative;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 #building.hero-ink-showcase {
@@ -669,6 +719,8 @@ h1 em {
   padding-right: 55px;
   color: var(--muted);
   font-size: 9px;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .section-tag > span:last-child,
@@ -772,6 +824,9 @@ body:not(.motion-ready) .project-track {
   flex: none;
   border: 0;
   cursor: pointer;
+  perspective: 1200px;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
 .project-image {
@@ -780,6 +835,8 @@ body:not(.motion-ready) .project-track {
   min-height: 250px;
   overflow: hidden;
   background: #c6c5bc;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .project-image img {
@@ -787,12 +844,13 @@ body:not(.motion-ready) .project-track {
   height: 100%;
   object-fit: cover;
   filter: saturate(0.35);
-  transition: filter 0.6s ease, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  transform-origin: center center;
+  will-change: transform, filter;
+  transition: filter 0.6s ease;
   display: block;
 }
 
 .project:hover img {
-  transform: scale(1.035);
   filter: saturate(0.85);
 }
 
@@ -1569,11 +1627,18 @@ html.lenis body {
 
 /* Mobile Devices (max-width: 600px) */
 @media (max-width: 600px) {
-  /* STEP 5: Optimize performance and responsiveness — Remove mobile scrollbars */
+  /* STEP 5: Optimize performance and responsiveness — Silk smooth mobile touch scroll */
   html,
   body {
     scrollbar-width: none;
     -ms-overflow-style: none;
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Disable heavy procedural SVG fractal noise overlay on mobile to save GPU composite memory */
+  body::after {
+    display: none;
   }
 
   ::-webkit-scrollbar {
@@ -1783,11 +1848,14 @@ html.lenis body {
     margin: 30px 0 22px;
     min-height: 300px;
     padding: 28px 0 33px;
+    touch-action: pan-y;
   }
   #building {
     width: 104%;
     margin-left: -2%;
     aspect-ratio: 1.6;
+    pointer-events: none;
+    touch-action: pan-y;
   }
   .drawing-top {
     font-size: 7px;
@@ -1959,6 +2027,18 @@ html.lenis body {
     border: 1px solid #5c5d51;
     background: #1c1d19;
     box-shadow: 0 14px 38px rgba(0, 0, 0, 0.65);
+    touch-action: pan-y;
+  }
+  .process-images,
+  .process-img,
+  .process-visual-overlay {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .process-img {
+    will-change: opacity, transform;
+    transform: translateZ(0);
   }
   .process-steps {
     position: relative;

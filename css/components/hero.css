@@ -139,6 +139,8 @@ h1 em {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  perspective: 1200px;
+  transform-style: preserve-3d;
   background:
     linear-gradient(90deg, transparent calc(50% - 0.5px), #ccc8bc60 50%, transparent calc(50% + 0.5px)),
     linear-gradient(transparent calc(50% - 0.5px), #ccc8bc60 50%, transparent calc(50% + 0.5px));
@@ -151,6 +153,8 @@ h1 em {
   color: var(--muted);
   font-size: 8px;
   align-items: center;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .drawing-top {
@@ -172,6 +176,8 @@ h1 em {
   margin-left: 0;
   aspect-ratio: 1.5;
   position: relative;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 #building.hero-ink-showcase {

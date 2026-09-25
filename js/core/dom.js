@@ -51,7 +51,13 @@ export const DOM = {
   briefDialog: document.querySelector('#brief-dialog'),
   briefOpen: document.querySelector('#brief-open'),
   briefForm: document.querySelector('#brief-form'),
-  formStatus: document.querySelector('#form-status')
+  formStatus: document.querySelector('#form-status'),
+  sectionTags: document.querySelectorAll('.section-tag'),
+  drawingTop: document.querySelector('.drawing-top'),
+  drawingBottom: document.querySelector('.drawing-bottom'),
+  drawingLabel: document.querySelector('.drawing-label'),
+  heroCopy: document.querySelector('.hero-copy'),
+  building: document.querySelector('#building')
 };
 
 // Update copyright year dynamically

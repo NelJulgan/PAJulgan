@@ -1,31 +1,90 @@
 /**
  * ============================================================================
- * 3rd — Enhancement, Animation & Optimization: GSAP & ScrollTrigger Suite
+ * PAJULGAN — Architecture & Engineering
+ * Professional Motion Architecture & Cinematic Scrolling System
  * File: js/modules/animations.js
  * ============================================================================
  *
- * Senior Mentorship Note:
- * For animation projects, always follow this coding order:
- * 1st: Build the HTML structure (Sections, pinned wrappers, drawing containers)
- * 2nd: Build the CSS foundation (Positioning, perspective, transforms, responsive behavior)
- * 3rd: Add JavaScript functionality (Select elements, register plugins, create timelines)
- * 4th: Add ScrollTrigger behavior (Pin sections, connect scrub, calibrate thresholds)
- * 5th: Add advanced effects (Morphing SVG masks, pointer displacement ripples, Lenis integration)
+ * Senior Mentorship Architecture Sequence:
+ *
+ * 1st — Foundation Code
+ * - Centralized MOTION_SYSTEM configuration object (cubic-bezier solvers, timing tokens).
+ * - GSAP & ScrollTrigger registration with high-performance frame limiter.
+ * - Global scroll progress bar indicator.
+ *
+ * 2nd — Core Functionality
+ * - Reusable animation presets:
+ *   - splitLineReveal(): Architectural mask-clip line reveals for section titles.
+ *   - kineticWordReveal(): Fine-grained typographic character scrub.
+ *   - progressiveServiceAccordions(): Viewport-calibrated progressive disclosure.
+ *   - stickyProcessShowcase(): Bidirectional 4-phase methodology crossfade.
+ *
+ * 3rd — Enhancement, Animation & Optimization
+ * - Hero Holographic Drafting Table Parallax (multi-plane depth across CAD elements).
+ * - Selected Works 3D Card Aperture Parallax (horizontal track counter-pan + scale).
+ * - Floating Architectural Section Tags (differential vertical velocity).
+ * - Centered Footer Liquid Ink Displacement Mask & Pointer Attraction physics.
+ * - Debounced asset load & font-ready recalibration.
  */
 
 import { DOM } from '../core/dom.js';
+import { solveCubicBezier } from '../core/lenis.js';
+
+// ============================================================================
+// 1st — Foundation Code: Centralized Motion Architecture
+// ============================================================================
+
+// STEP 1: Mathematical Easing Tokens & Motion Constants
+// Why this code exists:
+// Unifying all motion curves and durations under a single architecture guarantees
+// visual cohesion across the entire site, mirroring the disciplined design language
+// found in award-winning digital experiences (Apple, Awwwards Site of the Year).
+export const MOTION_SYSTEM = {
+  ease: {
+    // Master cubic-bezier(0.16, 1, 0.3, 1) solver — snappy initiation with weighted deceleration
+    cinematic: solveCubicBezier(0.16, 1, 0.3, 1),
+    smooth: 'power2.out',
+    expo: 'power4.out',
+    gentle: 'power1.out',
+    none: 'none'
+  },
+  duration: {
+    quick: 0.45,
+    base: 0.85,
+    extended: 1.25,
+    cinematic: 1.65
+  },
+  depth: {
+    background: 0.15,
+    midground: 0.35,
+    foreground: 0.65
+  }
+};
 
 export function initAnimations() {
-  if (!window.gsap || !window.ScrollTrigger) return;
+  if (typeof window === 'undefined' || !window.gsap || !window.ScrollTrigger) return;
 
   const gsap = window.gsap;
   const ScrollTrigger = window.ScrollTrigger;
 
+  // STEP 2: Configure Global Animation Defaults & Engine Throttles
+  // Why this code exists:
+  // Throttling ScrollTrigger synchronization to 100ms decouples scroll calculation bursts
+  // from layout rendering, preventing micro-stutters and sustaining 60-120 FPS.
   document.body.classList.add('motion-ready');
   gsap.registerPlugin(ScrollTrigger);
-  gsap.defaults({ ease: 'power3.out', duration: 1 });
 
-  // STEP 4: Global Scroll Progress Bar
+  ScrollTrigger.config({
+    limitCallbacks: true,
+    syncInterval: 100
+  });
+
+  gsap.defaults({
+    ease: 'power3.out',
+    duration: MOTION_SYSTEM.duration.base
+  });
+
+  // STEP 3: Global Viewport Scroll Progress Bar
   if (DOM.scrollProgress) {
     gsap.to(DOM.scrollProgress, {
       scaleX: 1,
@@ -38,117 +97,106 @@ export function initAnimations() {
     });
   }
 
-  // STEP 4: Hero Section Liquid Ink Showcase & Responsive Pin Controller
-  // Why this code exists:
-  // On desktop screens (min-width: 601px), pins '#heroPinWrapper' for 850px of dedicated scrub runway
-  // while the liquid ink mask morphs from CAD sketch to photorealistic render.
-  // On mobile view (max-width: 600px), pinning is completely removed ('pin: false' / unpinned)
-  // so the viewport flows naturally without hijacking mobile scroll.
-  // Tricky logic:
-  // 'gsap.matchMedia()' automatically cleans up ScrollTriggers, resets pinned spacers,
-  // and recalculates timeline scrub bounds when switching breakpoints or rotating mobile devices.
-  // TODO: Add touch friction modulation for high-refresh 120Hz mobile displays.
   const responsiveMedia = gsap.matchMedia();
 
-  // Desktop (min-width: 601px): Pinned Hero with 850px scrub runway
-  responsiveMedia.add('(min-width: 601px)', () => {
-    if (DOM.heroInkPath && DOM.heroPinWrapper) {
-      const finalMaskPath = DOM.heroInkPath.dataset.valueFinal || 'M 0 1000 Q 500 1250 1000 1000 L 1000 0 L 0 0 Z';
+  // ============================================================================
+  // 2nd — Core Functionality: Reusable Motion Presets
+  // ============================================================================
 
-      const heroPinTimeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: DOM.heroPinWrapper,
-          start: 'top top',
-          end: '+=850',
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true
-        }
-      });
-
-      // Morph the SVG mask curve
-      heroPinTimeline.fromTo(
-        DOM.heroInkPath,
-        { attr: { d: 'M 0 1 Q 500 2 1000 1 L 1000 0 L 0 0 Z' } },
-        { attr: { d: finalMaskPath }, ease: 'none', duration: 1 },
-        0
-      );
-
-      // Subtle depth parallax during the pin scrub
-      heroPinTimeline.to(
-        '.hero-ink-mask .ink-mask-img.main img',
-        { scale: 1.03, opacity: 0.88, ease: 'none', duration: 1 },
-        0
-      );
-      heroPinTimeline.to(
-        '#building',
-        { y: -15, ease: 'none', duration: 1 },
-        0
-      );
-    }
-  });
-
-  // Mobile (max-width: 600px): Unpinned Hero — Natural scroll flow without viewport lock
-  responsiveMedia.add('(max-width: 600px)', () => {
-    if (DOM.heroInkPath && DOM.heroPinWrapper) {
-      const finalMaskPath = DOM.heroInkPath.dataset.valueFinal || 'M 0 1000 Q 500 1250 1000 1000 L 1000 0 L 0 0 Z';
-
-      const heroMobileTimeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: DOM.heroPinWrapper,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1,
-          invalidateOnRefresh: true
-        }
-      });
-
-      heroMobileTimeline.fromTo(
-        DOM.heroInkPath,
-        { attr: { d: 'M 0 1 Q 500 2 1000 1 L 1000 0 L 0 0 Z' } },
-        { attr: { d: finalMaskPath }, ease: 'none', duration: 1 },
-        0
-      );
-    }
-  });
-
-  // STEP 3: Kinetic Word & Character Opacity Reveal
+  // STEP 1: Split-Line Reveal Preset (Architectural Mask Wipe)
   // Why this code exists:
-  // Splits editorial headings into words and characters, starting them at faint ghosted opacity (0.1)
-  // and lighting them up to solid opacity (1.0) as the user scrolls into view.
+  // Instead of plain fade-ins, titles emerge line-by-line from an invisible overflow mask
+  // with a subtle 3D tilt, creating a premium editorial reveal.
+  // Tricky logic:
+  // Splits by <br> or newline while preserving nested HTML tags like <em> without regex destruction.
+  function splitLineReveal(element, triggerStart = 'top 85%') {
+    if (!element) return;
+    const rawHtml = element.innerHTML.trim();
+    const lines = rawHtml.split(/<br\s*\/?>/i);
+
+    if (lines.length > 1) {
+      element.innerHTML = lines
+        .map((line) => `<span class="motion-line"><span class="motion-line-inner">${line.trim()}</span></span>`)
+        .join('');
+
+      const inners = element.querySelectorAll('.motion-line-inner');
+      gsap.fromTo(
+        inners,
+        {
+          yPercent: 110,
+          rotateX: 4,
+          opacity: 0
+        },
+        {
+          yPercent: 0,
+          rotateX: 0,
+          opacity: 1,
+          duration: MOTION_SYSTEM.duration.extended,
+          stagger: 0.12,
+          ease: 'power4.out',
+          scrollTrigger: {
+            trigger: element,
+            start: triggerStart,
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+    } else {
+      // Single line fallback with smooth upward glide and scale
+      gsap.fromTo(
+        element,
+        { y: 45, opacity: 0, scale: 0.98 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: MOTION_SYSTEM.duration.extended,
+          ease: 'power4.out',
+          scrollTrigger: {
+            trigger: element,
+            start: triggerStart,
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+    }
+  }
+
+  // STEP 2: Kinetic Word & Character Opacity Reveal
+  // Why this code exists:
+  // Progressively illuminates manifesto copy character-by-character as the user reads,
+  // connecting scroll momentum directly to typographic comprehension.
   if (DOM.wordReveals && DOM.wordReveals.length > 0) {
     DOM.wordReveals.forEach((el) => {
       const words = el.textContent.trim().split(/\s+/);
-      el.innerHTML = words.map((word) => {
-        const chars = word.split('').map((char) => `<span class="char">${char}</span>`).join('');
-        return `<span class="word">${chars}</span>`;
-      }).join(' ');
+      el.innerHTML = words
+        .map((word) => {
+          const chars = word.split('').map((char) => `<span class="char">${char}</span>`).join('');
+          return `<span class="word">${chars}</span>`;
+        })
+        .join(' ');
 
       const chars = el.querySelectorAll('.char');
       gsap.fromTo(
         chars,
-        { opacity: 0.1 },
+        { opacity: 0.12, y: 4 },
         {
           opacity: 1,
-          stagger: 0.04,
+          y: 0,
+          stagger: 0.035,
           ease: 'none',
           scrollTrigger: {
             trigger: el,
-            start: 'top 80%',
+            start: 'top 82%',
             end: 'bottom 45%',
-            scrub: 1
+            scrub: 0.85
           }
         }
       );
     });
   }
 
-  // STEP 4: Calibrated Section Fade-Up Entrances
-  // Master Threshold: All section entrance animations calibrated to 85vh (top 85% of viewport)
-  // Master Action: 'play none none reverse' retracts smoothly when scrolling back up.
-
-  // 1. Studio Manifesto Bottom Content
+  // STEP 3: Studio Bottom Content Staggered Entrance
   if (DOM.studioBottom) {
     gsap.fromTo(
       DOM.studioBottom.children,
@@ -156,7 +204,7 @@ export function initAnimations() {
       {
         y: 0,
         opacity: 1,
-        duration: 0.9,
+        duration: MOTION_SYSTEM.duration.extended,
         stagger: 0.16,
         ease: 'power3.out',
         scrollTrigger: {
@@ -168,112 +216,55 @@ export function initAnimations() {
     );
   }
 
-  // 2. Work Section Heading
+  // STEP 4: Selected Works Heading Mask Reveal
   if (DOM.workHeading) {
-    gsap.fromTo(
-      DOM.workHeading.children,
-      { y: 40, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.95,
-        stagger: 0.18,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: DOM.workHeading,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
-      }
-    );
-  }
+    const headingH2 = DOM.workHeading.querySelector('h2');
+    const headingAside = DOM.workHeading.querySelector('.work-aside');
 
-  // 3. Works Horizontal Scroll Pin & Responsive Stack
-  // CRITICAL ARCHITECTURE RULE:
-  // This pin MUST be instantiated before '.services' and '.approach' triggers below!
-  // GSAP calculates pin-spacing offsets chronologically. Creating this pin first
-  // ensures all subsequent trigger positions accurately reflect the 2000px+ horizontal scroll runway.
-  responsiveMedia.add('(min-width: 601px)', () => {
-    if (!DOM.workTrack) return;
-    const calculateDistance = () => Math.max(0, DOM.workTrack.scrollWidth - window.innerWidth);
+    if (headingH2) splitLineReveal(headingH2, 'top 85%');
 
-    gsap.to(DOM.workTrack, {
-      x: () => -calculateDistance(),
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '.work',
-        start: 'top top',
-        end: () => `+=${calculateDistance() + 450}`,
-        pin: true,
-        scrub: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          if (DOM.workProgressSpan) {
-            gsap.set(DOM.workProgressSpan, { scaleX: self.progress });
-          }
-        }
-      }
-    });
-  });
-
-  responsiveMedia.add('(max-width: 600px)', () => {
-    document.querySelectorAll('.project').forEach((el) => {
+    if (headingAside) {
       gsap.fromTo(
-        el,
+        headingAside,
         { y: 35, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.8,
+          duration: MOTION_SYSTEM.duration.base,
           ease: 'power3.out',
           scrollTrigger: {
-            trigger: el,
-            start: 'top 90%',
+            trigger: DOM.workHeading,
+            start: 'top 85%',
             toggleActions: 'play none none reverse'
           }
         }
       );
-    });
-  });
-
-  // 4. Services Heading (Calculated accurately AFTER .work's pin spacer)
-  if (DOM.servicesH2) {
-    gsap.fromTo(
-      DOM.servicesH2,
-      { y: 45, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.95,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: DOM.servicesH2,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
-        }
-      }
-    );
+    }
   }
 
-  // 5. Services Section List: Progressive ScrollTrigger Open & Smooth Accordion
-  // Why this code exists:
-  // Automatically unfolds each service discipline as the user scrolls down (threshold 72vh),
-  // creating a progressive editorial disclosure experience. Retracts smoothly when scrolling back up.
-  // Tricky logic:
-  // 1. Animates .service-body height (0 -> auto) and opacity (0 -> 1) via GSAP with power2.out.
-  // 2. Dynamic height expansion shifts layout positions. Calling ScrollTrigger.refresh() on complete
-  //    keeps approach, contact, and footer triggers accurately calibrated.
+  // STEP 5: Services Heading & Disciplines Accordion Progressive Disclosure
+  if (DOM.servicesH2) {
+    splitLineReveal(DOM.servicesH2, 'top 85%');
+  }
+
   if (DOM.serviceList) {
     const serviceItems = DOM.serviceList.querySelectorAll('details');
 
-    // Entrance fade-up for accordion items
+    let accordionRefreshTimer = null;
+    function debouncedScrollTriggerRefresh() {
+      clearTimeout(accordionRefreshTimer);
+      accordionRefreshTimer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 250);
+    }
+
     gsap.fromTo(
       serviceItems,
-      { y: 35, opacity: 0 },
+      { y: 40, opacity: 0 },
       {
         y: 0,
         opacity: 1,
-        duration: 0.85,
+        duration: MOTION_SYSTEM.duration.base,
         stagger: 0.12,
         ease: 'power3.out',
         scrollTrigger: {
@@ -285,62 +276,79 @@ export function initAnimations() {
     );
 
     function openServiceItem(item) {
-      if (item.open) return;
       const body = item.querySelector('.service-body');
-      item.open = true;
-
-      if (body) {
-        gsap.killTweensOf(body);
-        gsap.fromTo(
-          body,
-          { height: 0, opacity: 0, paddingBottom: 0, overflow: 'hidden' },
-          {
-            height: 'auto',
-            opacity: 1,
-            paddingBottom: 27,
-            duration: 0.5,
-            ease: 'power2.out',
-            overwrite: 'auto',
-            onComplete: () => ScrollTrigger.refresh()
-          }
-        );
-      } else {
-        ScrollTrigger.refresh();
+      if (!body) {
+        item.open = true;
+        debouncedScrollTriggerRefresh();
+        return;
       }
+
+      if (item.open && !gsap.isTweening(body) && body.offsetHeight > 0) return;
+
+      gsap.killTweensOf(body);
+      if (!item.open) {
+        item.open = true;
+        gsap.set(body, { height: 0, opacity: 0, overflow: 'hidden' });
+      }
+
+      const targetHeight = body.scrollHeight;
+      const startHeight = body.offsetHeight;
+      const startOpacity = parseFloat(gsap.getProperty(body, 'opacity')) || 0;
+
+      gsap.fromTo(
+        body,
+        { height: startHeight, opacity: startOpacity, overflow: 'hidden' },
+        {
+          height: targetHeight,
+          opacity: 1,
+          duration: 0.65,
+          ease: 'power3.out',
+          overwrite: 'auto',
+          onComplete: () => {
+            gsap.set(body, { height: 'auto', overflow: 'hidden' });
+            debouncedScrollTriggerRefresh();
+          }
+        }
+      );
     }
 
     function closeServiceItem(item) {
       if (!item.open) return;
       const body = item.querySelector('.service-body');
+      if (!body) {
+        item.open = false;
+        debouncedScrollTriggerRefresh();
+        return;
+      }
 
-      if (body) {
-        gsap.killTweensOf(body);
-        gsap.to(body, {
+      gsap.killTweensOf(body);
+      const currentHeight = body.offsetHeight;
+      const currentOpacity = parseFloat(gsap.getProperty(body, 'opacity')) || 1;
+
+      gsap.fromTo(
+        body,
+        { height: currentHeight, opacity: currentOpacity, overflow: 'hidden' },
+        {
           height: 0,
           opacity: 0,
-          paddingBottom: 0,
-          duration: 0.38,
+          duration: 0.45,
           ease: 'power2.inOut',
           overwrite: 'auto',
           onComplete: () => {
             item.open = false;
-            gsap.set(body, { clearProps: 'height,opacity,paddingBottom,overflow' });
-            ScrollTrigger.refresh();
+            gsap.set(body, { clearProps: 'height,opacity,overflow' });
+            debouncedScrollTriggerRefresh();
           }
-        });
-      } else {
-        item.open = false;
-        ScrollTrigger.refresh();
-      }
+        }
+      );
     }
 
-    // Bind manual click toggles and automatic scroll opening
     serviceItems.forEach((item) => {
       const summary = item.querySelector('summary');
       if (summary) {
         summary.addEventListener('click', (e) => {
           e.preventDefault();
-          if (item.open) {
+          if (item.open && !gsap.isTweening(item.querySelector('.service-body'))) {
             closeServiceItem(item);
           } else {
             openServiceItem(item);
@@ -348,16 +356,19 @@ export function initAnimations() {
         });
       }
 
-      ScrollTrigger.create({
-        trigger: item,
-        start: 'top 72%', // Triggers open when summary reaches 72% viewport height
-        onEnter: () => openServiceItem(item),
-        onLeaveBack: () => closeServiceItem(item)
+      // Automatic ScrollTrigger unfolding restricted strictly to Desktop
+      responsiveMedia.add('(min-width: 601px)', () => {
+        ScrollTrigger.create({
+          trigger: item,
+          start: 'top 74%',
+          onEnter: () => openServiceItem(item),
+          onLeaveBack: () => closeServiceItem(item)
+        });
       });
     });
   }
 
-  // 6. Approach Heading
+  // STEP 6: Approach Heading & Methodology Section
   if (DOM.approachHead) {
     const approachEyebrow = DOM.approachHead.querySelector('.eyebrow');
     const approachH2 = DOM.approachHead.querySelector('h2');
@@ -369,7 +380,7 @@ export function initAnimations() {
         {
           y: 0,
           opacity: 1,
-          duration: 0.8,
+          duration: MOTION_SYSTEM.duration.base,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: DOM.approachHead,
@@ -380,17 +391,66 @@ export function initAnimations() {
       );
     }
 
-    if (approachH2) {
+    if (approachH2) splitLineReveal(approachH2, 'top 85%');
+  }
+
+  // STEP 7: Contact Section Entrance
+  if (DOM.contactSection) {
+    const contactTag = DOM.contactSection.querySelector('.section-tag');
+    const contactEyebrow = DOM.contactSection.querySelector('.eyebrow');
+    const contactH2 = DOM.contactSection.querySelector('h2');
+    const contactBottom = DOM.contactSection.querySelector('.contact-bottom');
+
+    if (contactTag) {
       gsap.fromTo(
-        approachH2,
-        { y: 45, opacity: 0 },
+        contactTag,
+        { y: 30, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.95,
+          duration: MOTION_SYSTEM.duration.base,
           ease: 'power3.out',
           scrollTrigger: {
-            trigger: DOM.approachHead,
+            trigger: DOM.contactSection,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+    }
+
+    if (contactEyebrow) {
+      gsap.fromTo(
+        contactEyebrow,
+        { y: 25, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: MOTION_SYSTEM.duration.base,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: DOM.contactSection,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+    }
+
+    if (contactH2) splitLineReveal(contactH2, 'top 85%');
+
+    if (contactBottom) {
+      gsap.fromTo(
+        contactBottom.children,
+        { y: 35, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: MOTION_SYSTEM.duration.extended,
+          stagger: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: contactBottom,
             start: 'top 85%',
             toggleActions: 'play none none reverse'
           }
@@ -399,34 +459,208 @@ export function initAnimations() {
     }
   }
 
-  // 7. Contact Section Entrance
-  if (DOM.contactSection) {
-    const contactElements = [
-      DOM.contactSection.querySelector('.section-tag'),
-      DOM.contactSection.querySelector('.eyebrow'),
-      DOM.contactSection.querySelector('h2'),
-      DOM.contactSection.querySelector('.contact-bottom')
-    ].filter(Boolean);
+  // ============================================================================
+  // 3rd — Enhancement, Animation & Optimization: Cinematic Depth & 3D Parallax
+  // ============================================================================
 
-    gsap.fromTo(
-      contactElements,
-      { y: 45, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.95,
-        stagger: 0.14,
-        ease: 'power3.out',
+  // STEP 1: Hero Holographic Drafting Table Parallax (Desktop)
+  // Why this code exists:
+  // Moves CAD wireframe elements across different virtual depth planes, producing
+  // an architectural drafting table illusion with tangible physical weight.
+  responsiveMedia.add('(min-width: 601px)', () => {
+    if (DOM.heroInkPath && DOM.heroPinWrapper) {
+      const finalMaskPath = DOM.heroInkPath.dataset.valueFinal || 'M 0 1000 Q 500 1250 1000 1000 L 1000 0 L 0 0 Z';
+
+      const heroPinTimeline = gsap.timeline({
         scrollTrigger: {
-          trigger: DOM.contactSection,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
+          trigger: DOM.heroPinWrapper,
+          start: 'top top',
+          end: '+=900',
+          pin: true,
+          scrub: 1.1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true
+        }
+      });
+
+      // Layer 1: Liquid SVG mask morphing from CAD wireframe to render
+      heroPinTimeline.fromTo(
+        DOM.heroInkPath,
+        { attr: { d: 'M 0 1 Q 500 2 1000 1 L 1000 0 L 0 0 Z' } },
+        { attr: { d: finalMaskPath }, ease: 'none', duration: 1 },
+        0
+      );
+
+      // Layer 2: Midground Building subtle scale & vertical float
+      heroPinTimeline.to(
+        '#building',
+        { y: -30, scale: 1.03, ease: 'none', duration: 1 },
+        0
+      );
+
+      // Layer 3: Drawing metadata background drift
+      if (DOM.drawingTop) {
+        heroPinTimeline.to(DOM.drawingTop, { y: -20, opacity: 0.7, ease: 'none', duration: 1 }, 0);
+      }
+      if (DOM.drawingBottom) {
+        heroPinTimeline.to(DOM.drawingBottom, { y: 20, opacity: 0.7, ease: 'none', duration: 1 }, 0);
+      }
+      if (DOM.drawingLabel) {
+        heroPinTimeline.to(DOM.drawingLabel, { y: -40, ease: 'none', duration: 1 }, 0);
+      }
+
+      // Layer 4: Foreground Hero Copy upward drift
+      if (DOM.heroCopy) {
+        heroPinTimeline.to(DOM.heroCopy, { y: -50, opacity: 0.85, ease: 'none', duration: 1 }, 0);
+      }
+    }
+  });
+
+  // Mobile Hero: Natural fluid scrub without viewport lock
+  responsiveMedia.add('(max-width: 600px)', () => {
+    if (DOM.heroInkPath && DOM.heroPinWrapper) {
+      const finalMaskPath = DOM.heroInkPath.dataset.valueFinal || 'M 0 1000 Q 500 1250 1000 1000 L 1000 0 L 0 0 Z';
+
+      gsap.fromTo(
+        DOM.heroInkPath,
+        { attr: { d: 'M 0 1 Q 500 2 1000 1 L 1000 0 L 0 0 Z' } },
+        {
+          attr: { d: finalMaskPath },
+          ease: 'none',
+          scrollTrigger: {
+            trigger: DOM.heroPinWrapper,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.9,
+            invalidateOnRefresh: true
+          }
+        }
+      );
+    }
+  });
+
+  // STEP 2: Selected Works 3D Card Aperture Parallax
+  // Why this code exists:
+  // On desktop: As the horizontal track slides to the left, each card's internal image
+  // counter-glides to the right (+14% to -14%) with subtle breathing scale (1.14 -> 1.05).
+  // This turns each project card into a 3D architectural window into another space.
+  responsiveMedia.add('(min-width: 601px)', () => {
+    if (!DOM.workTrack) return;
+    const calculateDistance = () => Math.max(0, DOM.workTrack.scrollWidth - window.innerWidth);
+
+    // Track horizontal translation
+    gsap.to(DOM.workTrack, {
+      x: () => -calculateDistance(),
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.work',
+        start: 'top top',
+        end: () => `+=${calculateDistance() + 450}`,
+        pin: true,
+        scrub: 1.1,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          if (DOM.workProgressSpan) {
+            gsap.set(DOM.workProgressSpan, { scaleX: self.progress });
+          }
         }
       }
-    );
-  }
+    });
 
-  // STEP 3: Sticky Process Image Showcase Controller (4-Phase Architectural Methodology)
+    // Internal 3D image aperture parallax for each project card
+    document.querySelectorAll('.project').forEach((card) => {
+      const cardImg = card.querySelector('.project-image img');
+      if (cardImg) {
+        gsap.fromTo(
+          cardImg,
+          { xPercent: 12, scale: 1.14 },
+          {
+            xPercent: -12,
+            scale: 1.05,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: '.work',
+              start: 'top top',
+              end: () => `+=${calculateDistance() + 450}`,
+              scrub: true
+            }
+          }
+        );
+      }
+    });
+  });
+
+  // Mobile: Staggered vertical cards with vertical internal image parallax
+  responsiveMedia.add('(max-width: 600px)', () => {
+    document.querySelectorAll('.project').forEach((el) => {
+      // Card entrance reveal
+      gsap.fromTo(
+        el,
+        { y: 40, opacity: 0, scale: 0.96 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.85,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 88%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+
+      // Subtle vertical image parallax inside card
+      const cardImg = el.querySelector('.project-image img');
+      if (cardImg) {
+        gsap.fromTo(
+          cardImg,
+          { yPercent: -8, scale: 1.1 },
+          {
+            yPercent: 8,
+            scale: 1.02,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true
+            }
+          }
+        );
+      }
+    });
+  });
+
+  // STEP 3: Floating Architectural Section Tags Parallax
+  // Why this code exists:
+  // Section tags drift at a slower velocity than main content, creating spatial depth.
+  responsiveMedia.add('(min-width: 601px)', () => {
+    if (DOM.sectionTags && DOM.sectionTags.length > 0) {
+      DOM.sectionTags.forEach((tag) => {
+        const parentSection = tag.closest('.section') || tag.parentElement;
+        if (!parentSection) return;
+
+        gsap.fromTo(
+          tag,
+          { y: -25 },
+          {
+            y: 25,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: parentSection,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true
+            }
+          }
+        );
+      });
+    }
+  });
+
+  // STEP 4: Sticky Process Image Showcase Controller (4-Phase Methodology)
   const phaseLabels = [
     'PHASE // 01 DISCOVER',
     'PHASE // 02 DESIGN',
@@ -448,9 +682,8 @@ export function initAnimations() {
         gsap.to(img, {
           opacity: 1,
           scale: 1,
-          filter: 'saturate(1) brightness(1)',
-          duration: 0.85,
-          ease: 'power2.out',
+          duration: 0.65,
+          ease: 'power3.out',
           overwrite: 'auto'
         });
       } else {
@@ -458,9 +691,8 @@ export function initAnimations() {
         gsap.to(img, {
           opacity: 0,
           scale: 1.04,
-          filter: 'saturate(0.65) brightness(0.92)',
-          duration: 0.75,
-          ease: 'power2.out',
+          duration: 0.55,
+          ease: 'power3.out',
           overwrite: 'auto'
         });
       }
@@ -474,66 +706,48 @@ export function initAnimations() {
     }
   }
 
-  // STEP 4: Bind ScrollTriggers to each process step & synchronize image switches
-  // Why this code exists:
-  // Dynamically crossfades the pinned process visual imagery and updates chapter metadata
-  // as the user scrolls each methodology phase into and out of the active reading zone.
-  // Tricky logic:
-  // 1. 'start: top 55%' triggers on forward scroll when the step enters below the pinned visual.
-  // 2. 'onEnterBack' re-activates phase 'i' when scrolling upward from a later phase.
-  // 3. 'onLeaveBack' drops back to 'Math.max(0, i - 1)' when the step scrolls back below the threshold,
-  //    guaranteeing bidirectional synchronization without stuck or skipped phases.
-  // TODO: Add micro-haptic pulse on mobile devices when phase index changes.
-  if (DOM.processSteps && DOM.processSteps.length > 0) {
-    DOM.processSteps.forEach((step, i) => {
-      gsap.from(step, {
-        opacity: 0.25,
-        y: 35,
-        scrollTrigger: {
-          trigger: step,
-          start: 'top 85%',
-          end: 'top 45%',
-          scrub: 1
-        }
-      });
-
-      ScrollTrigger.create({
+  DOM.processSteps.forEach((step, i) => {
+    // Step entrance text reveal
+    gsap.from(step, {
+      opacity: 0.25,
+      y: 40,
+      scrollTrigger: {
         trigger: step,
-        start: 'top 55%',
-        end: 'bottom 55%',
-        onEnter: () => switchProcessImage(i),
-        onEnterBack: () => switchProcessImage(i),
-        onLeaveBack: () => switchProcessImage(Math.max(0, i - 1))
-      });
+        start: 'top 85%',
+        end: 'top 45%',
+        scrub: 0.9
+      }
     });
-  }
 
-  // STEP 4: Centered Footer Liquid Ink Displacement Mask
-  // Why this code exists:
-  // Creates an organic ink-filter circle mask animation on the centered footer word 'P JULGAN'.
-  // Tricky logic:
-  // 1. Dual-circle SVG mask: The primary circle expands on scroll to reveal the solid ink typography,
-  //    while the secondary pulse circle triggers dynamic organic liquid ripples at pointer coordinates.
-  // 2. Coordinates from clientX/clientY are projected into the SVG viewBox (0..1000 x 0..220).
-  // 3. ScrollTrigger scrub: Smooth bi-directional scrub (starts at 80vh, retracts to r:0 on scroll-up).
+    // Step milestone image crossfade trigger
+    ScrollTrigger.create({
+      trigger: step,
+      start: 'top 55%',
+      end: 'bottom 55%',
+      onEnter: () => switchProcessImage(i),
+      onEnterBack: () => switchProcessImage(i),
+      onLeaveBack: () => switchProcessImage(Math.max(0, i - 1))
+    });
+  });
+
+  // STEP 5: Centered Footer Liquid Ink Displacement Mask & Pointer Attraction
   if (DOM.footerWord && DOM.footerInkCircle) {
     gsap.fromTo(
       DOM.footerInkCircle,
       { attr: { r: 0, cx: 500, cy: 110 } },
       {
-        attr: { r: 720 },
+        attr: { r: 750 },
         ease: 'power2.out',
         scrollTrigger: {
           trigger: DOM.footerWordFallback || DOM.footerWord,
-          start: 'top 80%', // Threshold: 80vh of viewport
+          start: 'top 80%',
           end: 'bottom 45%',
-          scrub: 1, // Scrubs forward on scroll-down, retracts on scroll-up
+          scrub: 1.2,
           invalidateOnRefresh: true
         }
       }
     );
 
-    // Dynamic pointer tracking and ripple pulses
     let lastRippleTimestamp = 0;
 
     const triggerPointerInk = (clientX, clientY) => {
@@ -543,22 +757,20 @@ export function initAnimations() {
       const svgX = Math.max(0, Math.min(1000, ((clientX - rect.left) / rect.width) * 1000));
       const svgY = Math.max(0, Math.min(220, ((clientY - rect.top) / rect.height) * 220));
 
-      // Drift main circle center towards cursor
       gsap.to(DOM.footerInkCircle, {
         attr: { cx: svgX, cy: svgY },
         duration: 0.6,
-        ease: 'power2.out',
+        ease: 'power3.out',
         overwrite: 'auto'
       });
 
-      // Expanding ripple pulse
       if (DOM.footerInkPulse) {
         gsap.killTweensOf(DOM.footerInkPulse);
         gsap.fromTo(
           DOM.footerInkPulse,
           { attr: { cx: svgX, cy: svgY, r: 15 }, opacity: 0.85 },
           {
-            attr: { r: 340 },
+            attr: { r: 350 },
             opacity: 0,
             duration: 0.95,
             ease: 'power3.out'
@@ -568,28 +780,33 @@ export function initAnimations() {
     };
 
     DOM.footerWord.addEventListener('pointerenter', (e) => triggerPointerInk(e.clientX, e.clientY));
-
     DOM.footerWord.addEventListener('pointermove', (e) => {
       const now = performance.now();
-      if (now - lastRippleTimestamp > 75) {
+      if (now - lastRippleTimestamp > 65) {
         lastRippleTimestamp = now;
         triggerPointerInk(e.clientX, e.clientY);
       }
     });
-
     DOM.footerWord.addEventListener('pointerdown', (e) => triggerPointerInk(e.clientX, e.clientY));
   }
 
-  // STEP 5: Asset Load & Font-Ready Recalibration
-  // Recalculates ScrollTrigger layout coordinates after images and web fonts load.
+  // STEP 6: High-Performance Asset Load & Font-Ready Recalibration
+  let imageRefreshTimer = null;
+  const debouncedGlobalRefresh = () => {
+    clearTimeout(imageRefreshTimer);
+    imageRefreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 150);
+  };
+
   document.querySelectorAll('img').forEach((img) => {
     if (img.complete) return;
-    img.addEventListener('load', () => ScrollTrigger.refresh());
+    img.addEventListener('load', debouncedGlobalRefresh);
   });
 
   if (document.fonts?.ready) {
-    document.fonts.ready.then(() => ScrollTrigger.refresh());
+    document.fonts.ready.then(debouncedGlobalRefresh);
   }
 
-  window.addEventListener('load', () => ScrollTrigger.refresh());
+  window.addEventListener('load', debouncedGlobalRefresh);
 }
