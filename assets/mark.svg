@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 108" fill="none" stroke="#292b25" stroke-width="2.6" stroke-linecap="square">
+  <!-- Outer Stem Left Vertical (with drafting overshoots top & bottom) -->
+  <line x1="18" y1="8" x2="18" y2="100" />
+  <!-- Bottom Foot (with drafting overshoots left & right) -->
+  <line x1="10" y1="92" x2="44" y2="92" />
+  <!-- Inner Stem Right Vertical (lower leg, with overshoot at foot) -->
+  <line x1="38" y1="52" x2="38" y2="100" />
+
+  <!-- Top Outer Horizontal (with drafting overshoot past left stem) -->
+  <line x1="10" y1="14" x2="62" y2="14" />
+  <!-- Top-Right Diagonal Shoulder -->
+  <line x1="56" y1="12" x2="78" y2="34" />
+  <!-- Outer Right Vertical (with overshoots at corners) -->
+  <line x1="78" y1="30" x2="78" y2="44" />
+  <!-- Bottom-Right Diagonal Corner -->
+  <line x1="78" y1="40" x2="56" y2="60" />
+  <!-- Middle Crossbar (with drafting overshoot past left stem and right junction) -->
+  <line x1="10" y1="58" x2="62" y2="58" />
+
+  <!-- Inner Counter Left Vertical (with drafting overshoots top & bottom) -->
+  <line x1="38" y1="24" x2="38" y2="64" />
+  <!-- Inner Counter Top Horizontal (with drafting overshoot into stem) -->
+  <line x1="32" y1="30" x2="52" y2="30" />
+  <!-- Inner Diagonal Top-Right -->
+  <line x1="48" y1="28" x2="62" y2="40" />
+  <!-- Inner Diagonal Bottom-Right -->
+  <line x1="62" y1="38" x2="48" y2="50" />
+  <!-- Inner Counter Bottom Horizontal (with drafting overshoot into stem) -->
+  <line x1="32" y1="48" x2="52" y2="48" />
+</svg>

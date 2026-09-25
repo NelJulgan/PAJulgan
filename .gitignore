@@ -1,0 +1,109 @@
+# ==============================================================================
+# Git Ignore Configuration
+# Project: PAJ2 (Modern Vanilla HTML5 / CSS3 / ES6+)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# STEP 1: Sensitive Information, Credentials & Environment Secrets
+# Why: Prevents private API keys, environment configs, and cryptographic keys
+# from ever leaking into remote version control repositories.
+# ------------------------------------------------------------------------------
+.env
+.env.production
+.env.development
+.env.local
+.env.*.local
+*.env
+*.key
+*.pem
+*.cert
+*.crt
+*.pfx
+*.p12
+credentials.json
+id_rsa
+id_rsa.pub
+
+# ------------------------------------------------------------------------------
+# STEP 2: Package Dependencies & Package Manager Locks
+# Why: Dependencies can be re-installed deterministically; committing them bloats
+# repository size and causes merge conflicts.
+# ------------------------------------------------------------------------------
+node_modules/
+jspm_packages/
+web_modules/
+vendor/
+
+# ------------------------------------------------------------------------------
+# STEP 3: Build Outputs, Bundlers & Temporary Caches
+# Why: Generated assets and caches belong to the local build environment,
+# not version control.
+# ------------------------------------------------------------------------------
+dist/
+build/
+out/
+.cache/
+.parcel-cache/
+.turbo/
+*.tsbuildinfo
+
+# ------------------------------------------------------------------------------
+# STEP 4: Logs, Diagnostics & Runtime Traces
+# Why: Ephemeral logs created during local dev or package installations.
+# ------------------------------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ------------------------------------------------------------------------------
+# STEP 5: IDEs, Editors & Developer Workspace Settings
+# Why: Developer-specific configurations should not overwrite teammates' environments.
+# ------------------------------------------------------------------------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.sublime-workspace
+*.sublime-project
+
+# ------------------------------------------------------------------------------
+# STEP 6: Operating System Artifacts & Metadata
+# Why: System-generated hidden files created by Windows File Explorer, macOS Finder, etc.
+# ------------------------------------------------------------------------------
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux / General temp
+*~
+*.bak
+*.tmp
+*.temp
+
+# ------------------------------------------------------------------------------
+# STEP 7: Testing & Code Coverage Reports
+# Why: Test execution outputs and coverage metrics change on every test run.
+# ------------------------------------------------------------------------------
+coverage/
+.nyc_output/
+
+# TODO: If automated visual regression testing or Lighthouse CI runs are introduced,
+# verify and append `.lighthouseci/` or visual diff artifact folders here.

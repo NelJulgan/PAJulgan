@@ -1,0 +1,148 @@
+/* STEP 2: Selected Works Section & Horizontal Showcase Track */
+.work {
+  padding: 45px 0 28px;
+  overflow: hidden;
+}
+
+.work-heading {
+  margin: 0 38px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.work-aside {
+  font-size: 12px;
+  padding-right: 5vw;
+}
+
+.work-aside .mono {
+  display: block;
+  margin-top: 32px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+body:not(.motion-ready) .project-track {
+  width: auto;
+  overflow-x: auto;
+}
+
+.project-track {
+  display: flex;
+  gap: 26px;
+  width: max-content;
+  padding: 0 38px;
+  will-change: transform;
+}
+
+.project {
+  display: block;
+  text-align: left;
+  width: 65vw;
+  background: none;
+  padding: 0;
+  flex: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.project-image {
+  position: relative;
+  height: 42vh;
+  min-height: 250px;
+  overflow: hidden;
+  background: #c6c5bc;
+}
+
+.project-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.35);
+  transition: filter 0.6s ease, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  display: block;
+}
+
+.project:hover img {
+  transform: scale(1.035);
+  filter: saturate(0.85);
+}
+
+.image-number,
+.image-caption {
+  position: absolute;
+  left: 22px;
+  color: white;
+  text-shadow: 0 1px 8px #222;
+  z-index: 2;
+}
+
+.image-number {
+  top: 22px;
+}
+
+.image-caption {
+  bottom: 20px;
+  font-size: 9px;
+}
+
+.project-open {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  border: 1px solid #ffffff80;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 22px;
+  transition: background 0.3s ease;
+  z-index: 2;
+}
+
+.project:hover .project-open {
+  background: var(--red);
+}
+
+.project-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.project-info h3 {
+  font-size: 24px;
+  letter-spacing: -0.04em;
+}
+
+.project-info .mono {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.work-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 30px 38px 0;
+  font-size: 8px;
+}
+
+.work-progress {
+  width: 25%;
+  height: 1px;
+  background: var(--line);
+}
+
+.work-progress span {
+  display: block;
+  background: var(--red);
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+

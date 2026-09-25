@@ -1,0 +1,127 @@
+/* STEP 2: Approach Section & Sticky Process Image Showcase */
+.approach {
+  background: var(--ink);
+  color: var(--paper);
+  margin: 55px 12px 0;
+  padding: 75px 64px;
+}
+
+.approach-head {
+  display: flex;
+  gap: 10%;
+  align-items: flex-start;
+}
+
+.approach-head .eyebrow {
+  width: 20%;
+  flex: none;
+  color: #a7aa9a;
+}
+
+.approach-head h2 {
+  font-size: clamp(40px, 4.3vw, 68px);
+}
+
+.process-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10%;
+  margin-top: 80px;
+  align-items: start;
+}
+
+.process-visual {
+  position: sticky;
+  top: 120px;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: 1px solid #5c5d51;
+  background: #1c1d19;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.process-images {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.process-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.04);
+  filter: saturate(0.65) brightness(0.92);
+  transition: opacity 0.85s cubic-bezier(0.25, 1, 0.5, 1), transform 0.9s cubic-bezier(0.25, 1, 0.5, 1), filter 0.85s ease;
+  will-change: opacity, transform, filter;
+  pointer-events: none;
+}
+
+.process-img.active {
+  opacity: 1;
+  transform: scale(1);
+  filter: saturate(1) brightness(1);
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.process-visual-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(180deg, transparent 0%, rgba(20, 21, 18, 0.88) 100%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.process-visual-overlay .process-index {
+  position: static;
+  font-size: 11px;
+  color: var(--paper);
+  letter-spacing: 0.08em;
+}
+
+.process-visual-overlay .process-current {
+  color: var(--red);
+  font-weight: 500;
+}
+
+.process-caption {
+  font-size: 9px;
+  color: #a7aa9a;
+  letter-spacing: 0.12em;
+}
+
+.process-step {
+  min-height: 350px;
+  padding: 25px 0 80px;
+  border-top: 1px solid #626456;
+}
+
+.process-step > .mono {
+  color: #aaa99b;
+  font-size: 9px;
+}
+
+.process-step h3 {
+  font-size: 36px;
+  letter-spacing: -0.04em;
+  margin: 35px 0 20px;
+}
+
+.process-step p {
+  font-size: 14px;
+  color: #b8bbac;
+  max-width: 350px;
+}
+

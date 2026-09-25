@@ -1,0 +1,110 @@
+/* STEP 2: Header Navigation & Architectural Stroked Brand Wordmark */
+/* Architectural wireframe stroke for the capital 'P'
+   Why this code exists:
+   Creates the iconic CAD wireframe outline for the letter 'P' in 'P JULGAN'.
+   Using -webkit-text-stroke with transparent fill delivers crisp architectural line-art
+   that inherits color via currentColor and transitions smoothly on hover. */
+.stroke-p {
+  display: inline-block;
+  -webkit-text-stroke: 1.85px currentColor;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  transition: -webkit-text-stroke-color 0.25s cubic-bezier(0.25, 1, 0.5, 1), transform 0.25s ease;
+  line-height: inherit;
+}
+
+.header {
+  height: 86px;
+  margin: 0 38px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  z-index: 30;
+}
+
+.brand {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  text-decoration: none;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.brand-title {
+  font-family: var(--codec);
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+  color: var(--ink);
+  transition: color 0.25s ease;
+}
+
+.brand-title .stroke-p {
+  -webkit-text-stroke-width: 1.85px;
+  -webkit-text-stroke-color: var(--muted);
+  color: var(--muted);
+}
+
+.brand:hover .stroke-p {
+  -webkit-text-stroke-color: var(--red);
+  transform: translateY(-1px);
+}
+
+.brand small {
+  display: block;
+  font: 7px/1.5 var(--mono);
+  letter-spacing: 1.2px;
+  margin-top: 1px;
+  color: var(--muted);
+  text-transform: uppercase;
+  transition: color 0.25s ease;
+}
+
+.brand:hover small {
+  color: var(--ink);
+}
+
+.header nav {
+  display: flex;
+  align-items: center;
+  gap: 43px;
+  font-size: 12px;
+}
+
+.header nav a {
+  transition: color 0.2s ease;
+}
+
+.header nav a:hover {
+  color: var(--red);
+}
+
+nav sup {
+  font: 8px var(--mono);
+  margin-left: 5px;
+  color: var(--muted);
+}
+
+nav .nav-contact {
+  color: var(--red);
+  border-left: 1px solid var(--line);
+  padding-left: 30px;
+}
+
+nav .nav-contact span {
+  font-size: 23px;
+  margin-left: 35px;
+}
+
+.menu-button {
+  display: none;
+}
+

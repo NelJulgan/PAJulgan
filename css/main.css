@@ -1,0 +1,49 @@
+/**
+ * ============================================================================
+ * PAJULGAN — Architecture & Engineering
+ * Master CSS Aggregator (Zero-Build Modular Architecture)
+ * ============================================================================
+ *
+ * Senior Mentorship Architecture Sequence:
+ *
+ * 1st — Foundation Code
+ * - variables.css (Design tokens, font-faces, CSS custom properties)
+ * - reset.css     (Global normalization, box-sizing, typography resets)
+ * - global.css    (Shared utilities, typography rules, scroll-progress)
+ *
+ * 2nd — Core Functionality: Component Stylesheets
+ * - components/intro.css      (Architectural curtain preloader)
+ * - components/header.css     (Branding lockup, stroked mark, navigation)
+ * - components/hero.css       (Pinned ink showcase, axonometric drawing)
+ * - components/studio.css     (Manifesto grid, kinetic reveal treatment)
+ * - components/work.css       (Horizontal showcase track, project cards)
+ * - components/services.css   (Discipline list, progressive accordions)
+ * - components/approach.css   (Methodology process split, sticky image stack)
+ * - components/contact.css    (Project engagement, inquiry channels)
+ * - components/footer.css     (Liquid ink displacement mask, colophon)
+ * - components/dialogs.css    (Accessible modal dialogs, project brief generator)
+ *
+ * 3rd — Enhancement, Animation & Optimization
+ * - components/responsive.css (Lenis momentum scroll layer, breakpoints, a11y)
+ * ============================================================================
+ */
+
+/* 1st — Foundation Code */
+@import './variables.css';
+@import './reset.css';
+@import './global.css';
+
+/* 2nd — Core Functionality: Layout Components & UI Sections */
+@import './components/intro.css';
+@import './components/header.css';
+@import './components/hero.css';
+@import './components/studio.css';
+@import './components/work.css';
+@import './components/services.css';
+@import './components/approach.css';
+@import './components/contact.css';
+@import './components/footer.css';
+@import './components/dialogs.css';
+
+/* 3rd — Enhancement, Animation & Optimization */
+@import './components/responsive.css';

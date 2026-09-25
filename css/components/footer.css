@@ -1,0 +1,126 @@
+/* STEP 2: Footer & Centered Liquid Ink Displacement Mask */
+footer {
+  padding: 35px 38px 20px;
+}
+
+.footer-top,
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  font-size: 8px;
+}
+
+.footer-top {
+  color: var(--muted);
+}
+
+.footer-word {
+  font-family: var(--codec);
+  font-weight: 800;
+  font-size: 16.3vw;
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+  position: relative;
+  margin-left: 0;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ink-footer-word {
+  isolation: isolate;
+  overflow: visible;
+  position: relative;
+  cursor: crosshair;
+  touch-action: pan-y;
+}
+
+.ink-footer-word .footer-word-fallback,
+.ink-footer-word .footer-word-fallback * {
+  font-family: var(--codec);
+  font-weight: 800;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  -webkit-text-stroke: 0 transparent !important;
+  -webkit-text-stroke-width: 0 !important;
+  user-select: none;
+}
+
+.ink-footer-word .footer-word-fallback {
+  font-size: inherit;
+  line-height: 1.2;
+  text-align: center;
+  display: inline-block;
+  position: relative;
+  white-space: nowrap;
+}
+
+.ink-footer-word .footer-word-mark {
+  position: absolute;
+  right: -0.42em;
+  top: 0.16em;
+  color: var(--ink) !important;
+  -webkit-text-fill-color: var(--ink) !important;
+  -webkit-text-stroke: 0 transparent !important;
+  font-size: 22px;
+  letter-spacing: 0;
+  font-weight: 400;
+  pointer-events: none;
+}
+
+.ink-footer-word .ink-mask-img.sub.ink-filter {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.footer-ink-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.footer-text-ghost {
+  font-family: var(--codec);
+  font-size: 163px;
+  font-weight: 800;
+  letter-spacing: -5px;
+  fill: rgba(41, 43, 37, 0.12);
+  user-select: none;
+}
+
+.footer-text-active {
+  font-family: var(--codec);
+  font-size: 163px;
+  font-weight: 800;
+  letter-spacing: -5px;
+  fill: var(--ink);
+  user-select: none;
+}
+
+.footer-text-ghost .footer-stroke-p {
+  fill: none;
+  stroke: rgba(41, 43, 37, 0.22);
+  stroke-width: 3.5px;
+}
+
+.footer-text-active .footer-stroke-p {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3.8px;
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  color: var(--muted);
+}
+

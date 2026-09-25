@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ==========================================================================
+   PAJULGAN — Architecture & Engineering
+   Production Stylesheet
+   ========================================================================== */
+
+/* ==========================================================================
+   1st — Foundation Code: Design Tokens, Fonts & Global Reset
+   ========================================================================== */
+
+/* STEP 1: Define CSS custom properties and font-face declarations */
+
+/* Typography: Codec Cold ExtraBold for brand lockup and heroic statements */
+@font-face {
+  font-family: 'Codec Cold';
+  src: url('assets/CodecCold-ExtraBold.woff') format('woff'),
+       url('https://fonts.cdnfonts.com/s/14895/Codec-Cold-ExtraBold-trial.woff') format('woff');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Codec Cold ExtraBold';
+  src: url('assets/CodecCold-ExtraBold.woff') format('woff'),
+       url('https://fonts.cdnfonts.com/s/14895/Codec-Cold-ExtraBold-trial.woff') format('woff');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Design Tokens & CSS Variables */
+:root {
+  --paper: #eeeae1;
+  --ink: #292b25;
+  --muted: #74756c;
+  --line: #c8c6bb;
+  --red: #ba452e;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'DM Sans', Arial, sans-serif;
+  --codec: 'Codec Cold', 'Codec Cold ExtraBold', var(--sans);
+}
+

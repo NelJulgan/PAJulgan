@@ -1,0 +1,105 @@
+/* STEP 2: Accessible Dialogs & Modals */
+dialog {
+  border: 1px solid var(--line);
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  width: min(860px, 94vw);
+  max-height: 90dvh;
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  background: #20221dd9;
+  backdrop-filter: blur(6px);
+}
+
+.dialog-close {
+  position: sticky;
+  top: 15px;
+  float: right;
+  margin: 15px 15px -55px 0;
+  z-index: 2;
+  padding: 12px 20px;
+  background: var(--paper);
+  font-size: 12px;
+}
+
+#project-detail-image {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+}
+
+.dialog-copy {
+  padding: 35px;
+}
+
+.dialog-copy h2 {
+  margin-bottom: 25px;
+  font-size: 46px;
+}
+
+.dialog-copy p {
+  max-width: 660px;
+  font-size: 14px;
+}
+
+.dialog-copy .project-note {
+  margin-top: 20px;
+  font-size: 9px;
+  color: var(--muted);
+}
+
+#brief-dialog {
+  padding: 42px;
+  width: min(590px, 94vw);
+}
+
+#brief-dialog .dialog-close {
+  margin: -22px -22px 0 0;
+}
+
+#brief-dialog h2 {
+  font-size: 55px;
+  margin-bottom: 22px;
+}
+
+#brief-dialog > p:not(.eyebrow) {
+  font-size: 12px;
+  max-width: 400px;
+}
+
+form {
+  margin-top: 28px;
+  display: grid;
+  gap: 18px;
+}
+
+label {
+  font-size: 11px;
+  display: grid;
+  gap: 7px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  padding: 12px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+textarea {
+  resize: vertical;
+}
+
+#form-status {
+  font-size: 12px;
+  color: var(--red);
+}
+

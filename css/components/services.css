@@ -1,0 +1,91 @@
+/* ==========================================================================
+   STEP 2: Services Section & Polished Accordion
+   ========================================================================== */
+
+.services {
+  padding-top: 100px;
+}
+
+.service-list {
+  margin-top: 45px;
+}
+
+details {
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+  transition: background-color 0.25s ease;
+}
+
+details:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  padding: 25px 0;
+  font-size: 25px;
+  letter-spacing: -0.04em;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.25s ease;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary:hover {
+  color: var(--red);
+}
+
+summary > .mono {
+  font-size: 9px;
+  color: var(--muted);
+  width: 60px;
+  letter-spacing: 0;
+  transition: color 0.25s ease;
+}
+
+summary:hover > .mono {
+  color: var(--red);
+}
+
+.plus {
+  margin-left: auto;
+  font-size: 23px;
+  font-weight: 400;
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), color 0.3s ease;
+  display: inline-block;
+  line-height: 1;
+}
+
+details[open] .plus {
+  transform: rotate(45deg);
+  color: var(--red);
+}
+
+/* Service body container
+   Why this styling exists:
+   Zero vertical padding on the outer container allows height: 0 to collapse to exactly 0px
+   without any residual padding boxes. Bottom spacing is handled cleanly on the last child. */
+.service-body {
+  padding: 0 50px 0 60px;
+  max-width: 700px;
+  overflow: hidden;
+  will-change: height, opacity;
+}
+
+.service-body p {
+  font-size: 14px;
+  max-width: 500px;
+}
+
+.service-body .mono {
+  display: block;
+  font-size: 8px;
+  color: var(--muted);
+  margin-top: 20px;
+  padding-bottom: 27px;
+}

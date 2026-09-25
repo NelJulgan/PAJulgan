@@ -1,0 +1,40 @@
+
+.mono,
+.eyebrow {
+  font: 10px/1.5 var(--mono);
+  letter-spacing: 0.04em;
+}
+
+.eyebrow {
+  margin-bottom: 25px;
+}
+
+/* Accessibility: Skip to Content link */
+.skip {
+  position: fixed;
+  top: -80px;
+  left: 20px;
+  padding: 14px;
+  background: var(--ink);
+  color: white;
+  z-index: 200;
+  transition: top 0.2s ease;
+}
+
+.skip:focus {
+  top: 10px;
+}
+
+/* Global scroll progress line */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 80;
+  background: var(--red);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+

@@ -1,0 +1,67 @@
+/* STEP 2: General Section Layout & Studio Manifesto */
+.section {
+  display: grid;
+  grid-template-columns: 25% 75%;
+  margin: 0 38px;
+  padding: 110px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-tag {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 55px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.section-tag > span:last-child {
+  font-size: 20px;
+  line-height: 1;
+}
+
+h2 {
+  font-size: clamp(40px, 4.6vw, 78px);
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+}
+
+.manifesto h2 {
+  max-width: 930px;
+}
+
+.word-reveal {
+  overflow: visible;
+  line-height: 1.1;
+}
+
+.word-reveal .word {
+  display: inline-block;
+  white-space: nowrap;
+  margin-right: 0.28em;
+}
+
+.word-reveal .char {
+  display: inline-block;
+  opacity: 0.1;
+  will-change: opacity;
+  transition: opacity 0.15s ease;
+}
+
+.studio-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 45px;
+}
+
+.studio-bottom p {
+  font-size: 13px;
+  max-width: 320px;
+}
+
+.studio-bottom .text-link {
+  grid-column: 1 / 3;
+  justify-self: start;
+}
+
